@@ -4,7 +4,7 @@ package controle;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
-public class Bola {
+public class Inimigo {
 
     public BufferedImage parada;
     public BufferedImage direita_baixo;
@@ -22,7 +22,7 @@ public class Bola {
     public int velY;
     public BufferedImage imgAtual;
 
-    public Bola() {
+    public Inimigo() {
 
         try {
             parada = ImageIO.read(getClass().getResource("/imgs/parada.gif"));

@@ -16,12 +16,17 @@ import javax.swing.JPanel;
 public class Game extends JPanel {
 
     public Bola bola; // criar um objeto a classe bola
-    private boolean k_cima = false;
-    private boolean k_baixo = false;
-    private boolean k_direita = false;
-    private boolean k_esquerda = false;
-    private BufferedImage imgAtual;
-
+    public Inimigo inimigo;
+    private boolean person_k_cima = false;
+    private boolean person_k_baixo = false;
+    private boolean person_k_direita = false;
+    private boolean person_k_esquerda = false;
+    private boolean inimigo_k_cima = false;
+    private boolean inimigo_k_baixo = false;
+    private boolean inimigo_k_direita = false;
+    private boolean inimigo_k_esquerda = false;
+    private BufferedImage personagemImgAtual;
+    private BufferedImage inimigoImgAtual;
     private int mousePosX, mousePosY;
     private boolean clicado = false;
 
@@ -80,16 +85,30 @@ public class Game extends JPanel {
             public void keyPressed(KeyEvent e) {
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_UP:
-                        k_cima = true;
+                        person_k_cima = true;
                         break;
                     case KeyEvent.VK_DOWN:
-                        k_baixo = true;
+                        person_k_baixo = true;
                         break;
                     case KeyEvent.VK_LEFT:
-                        k_esquerda = true;
+                        person_k_esquerda = true;
                         break;
                     case KeyEvent.VK_RIGHT:
-                        k_direita = true;
+                        person_k_direita = true;
+                        break;
+                }
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_UP:
+                        inimigo_k_cima = true;
+                        break;
+                    case KeyEvent.VK_DOWN:
+                        inimigo_k_baixo = true;
+                        break;
+                    case KeyEvent.VK_LEFT:
+                        inimigo_k_esquerda = true;
+                        break;
+                    case KeyEvent.VK_RIGHT:
+                        inimigo_k_direita = true;
                         break;
                 }
             }
@@ -98,16 +117,30 @@ public class Game extends JPanel {
             public void keyReleased(KeyEvent e) {
                 switch (e.getKeyCode()) {
                     case KeyEvent.VK_UP:
-                        k_cima = false;
+                        person_k_cima = false;
                         break;
                     case KeyEvent.VK_DOWN:
-                        k_baixo = false;
+                        person_k_baixo = false;
                         break;
                     case KeyEvent.VK_LEFT:
-                        k_esquerda = false;
+                        person_k_esquerda = false;
                         break;
                     case KeyEvent.VK_RIGHT:
-                        k_direita = false;
+                        person_k_direita = false;
+                        break;
+                }
+                switch (e.getKeyCode()) {
+                    case KeyEvent.VK_UP:
+                        inimigo_k_cima = false;
+                        break;
+                    case KeyEvent.VK_DOWN:
+                        inimigo_k_baixo = false;
+                        break;
+                    case KeyEvent.VK_LEFT:
+                        inimigo_k_esquerda = false;
+                        break;
+                    case KeyEvent.VK_RIGHT:
+                        inimigo_k_direita = false;
                         break;
                 }
             }
@@ -134,7 +167,7 @@ public class Game extends JPanel {
             try {
                 Thread.sleep(17);
             } catch (InterruptedException ex) {
-                Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex+"aq");
             }
         }
     }
@@ -142,34 +175,72 @@ public class Game extends JPanel {
     public void handlerEvents() {
         bola.velX = 0;
         bola.velY = 0;
-        imgAtual = bola.parada;
 
-        if (k_cima == true) {
+        //inimigo.velX = 0 ;
+        //inimigo.velY = 0 ;
+        moverPersonagem();
+        moverInimigo();
+        personagemImgAtual = bola.parada;
+        inimigoImgAtual = inimigo.parada;
+
+        
+    }
+    public void moverPersonagem(){
+        if (person_k_cima == true) {
             bola.velY = -3;
-            imgAtual = bola.cima;
-            if (k_esquerda == true) {
+            personagemImgAtual = bola.cima;
+            if (person_k_esquerda == true) {
                 bola.velX = -3;
-                imgAtual = bola.esquerda_cima;
-            } else if (k_direita == true) {
+                personagemImgAtual = bola.esquerda_cima;
+            } else if (person_k_direita == true) {
                 bola.velX = 3;
-                imgAtual = bola.direita_cima;
+                personagemImgAtual = bola.direita_cima;
             }
-        } else if (k_baixo == true) {
+        } else if (person_k_baixo == true) {
             bola.velY = 3;
-            imgAtual = bola.baixo;
-            if (k_esquerda == true) {
+            personagemImgAtual = bola.baixo;
+            if (person_k_esquerda == true) {
                 bola.velX = -3;
-                imgAtual = bola.esquerda_baixo;
-            } else if (k_direita == true) {
+                personagemImgAtual = bola.esquerda_baixo;
+            } else if (person_k_direita == true) {
                 bola.velX = 3;
-                imgAtual = bola.direita_baixo;
+                personagemImgAtual = bola.direita_baixo;
             }
-        } else if (k_direita == true) {
+        } else if (person_k_direita == true) {
             bola.velX = 3;
-            imgAtual = bola.direita;
-        } else if (k_esquerda == true) {
+            personagemImgAtual = bola.direita;
+        } else if (person_k_esquerda == true) {
             bola.velX = -3;
-            imgAtual = bola.esquerda;
+            personagemImgAtual = bola.esquerda;
+        }
+    }
+    public void moverInimigo(){
+        if (inimigo_k_cima == true) {
+            inimigo.velY = -3;
+            inimigoImgAtual = inimigo.cima;
+            if (inimigo_k_esquerda == true) {
+                inimigo.velX = -3;
+                inimigoImgAtual = inimigo.esquerda_cima;
+            } else if (inimigo_k_direita == true) {
+                inimigo.velX = 3;
+                inimigoImgAtual = inimigo.direita_cima;
+            }
+        } else if (inimigo_k_baixo == true) {
+            inimigo.velY = 3;
+            inimigoImgAtual = inimigo.baixo;
+            if (inimigo_k_esquerda == true) {
+                inimigo.velX = -3;
+                inimigoImgAtual = inimigo.esquerda_baixo;
+            } else if (inimigo_k_direita == true) {
+                inimigo.velX = 3;
+                inimigoImgAtual = inimigo.direita_baixo;
+            }
+        } else if (inimigo_k_direita == true) {
+            inimigo.velX = 3;
+            inimigoImgAtual = inimigo.direita;
+        } else if (inimigo_k_esquerda == true) {
+            inimigo.velX = -3;
+            inimigoImgAtual = inimigo.esquerda;
         }
     }
 
@@ -198,8 +269,10 @@ public class Game extends JPanel {
             }*/
         }
 
-        //bola.posX = bola.posX+bola.velX;
-        //bola.posY = bola.posY+bola.velY;
+        bola.posX = bola.posX+bola.velX;
+        bola.posY = bola.posY+bola.velY;
+        inimigo.posX = inimigo.posX+inimigo.velX;
+        inimigo.posY = inimigo.posY+inimigo.velY;
         testeColisoes();
 
         //System.out.println(mousePosX + "-" + mousePosY);
@@ -246,6 +319,7 @@ public class Game extends JPanel {
         setBackground(Color.LIGHT_GRAY);
         g.setColor(Color.RED);
         //g.fillOval(bola.posX, bola.posY, bola.raio*2, bola.raio*2);
-        g.drawImage(imgAtual, bola.posX, bola.posY, null);
+        g.drawImage(personagemImgAtual, bola.posX, bola.posY, null);
+        //g.drawImage(inimigoImgAtual, inimigo.posX, inimigo.posY, null);
     }
 }
