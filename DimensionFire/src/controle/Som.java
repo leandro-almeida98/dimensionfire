@@ -19,7 +19,7 @@ public class Som {
             AudioInputStream audioInput = AudioSystem.getAudioInputStream(input);
             oClip.open(audioInput);
             System.out.println("Toque");
-            oClip.loop(10); // Toca uma vez
+            oClip.loop(10); // Toca varias vezes
             //clip.loop(Clip.LOOP_CONTINUOUSLY); // Toca continuamente (para o caso de músicas)
             // Para a execução (senão o programa termina antes de você ouvir o som)
             SwingUtilities.invokeLater(new Runnable() {

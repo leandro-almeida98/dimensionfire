@@ -202,7 +202,7 @@ public class Game extends JPanel {
         //bola.posY = bola.posY+bola.velY;
         testeColisoes();
 
-        System.out.println(mousePosX + "-" + mousePosY);
+        //System.out.println(mousePosX + "-" + mousePosY);
     }
     public void cima_baixo(int vel){
         if (bola.posY > mousePosY - bola.raio) {
