@@ -4,6 +4,7 @@ package controle;
 import interfaces.Inicio_tela;
 import java.awt.Dimension;
 import javax.swing.JFrame;
+import model.Conexao;
 
 public class Principal {
 
@@ -29,6 +30,9 @@ public class Principal {
         //new Inicio_tela().setVisible(true);
         new Principal();
         //Syst
+        Conexao con = new Conexao();
+        con.ConectarMysql();
+        System.out.println(con.statusConection());
     }
 
 }
