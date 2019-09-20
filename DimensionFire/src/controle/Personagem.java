@@ -1,10 +1,11 @@
 package controle;
 
 
+import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
-public class Inimigo {
+public class Personagem {
 
     private BufferedImage parada;
     private BufferedImage direita_baixo;
@@ -23,8 +24,7 @@ public class Inimigo {
     private BufferedImage imgAtual;
     private int velocidade;
 
-    public Inimigo() {
-
+    public Personagem() {
         try {
             setParada(ImageIO.read(getClass().getResource("/imgs/parada.gif")));
             setDireita_cima(ImageIO.read(getClass().getResource("/imgs/direita_cima.gif")));
@@ -205,4 +205,21 @@ public class Inimigo {
         this.velocidade = velocidade;
     }
 
+    
+    /*public void comandos(){
+        switch (e.getKeyCode()) {
+            case KeyEvent.VK_UP:
+                person_k_cima = true;
+                break;
+            case KeyEvent.VK_DOWN:
+                person_k_baixo = true;
+                break;
+            case KeyEvent.VK_LEFT:
+                person_k_esquerda = true;
+                break;
+            case KeyEvent.VK_RIGHT:
+                person_k_direita = true;
+                break;
+        }
+    }*/
 }

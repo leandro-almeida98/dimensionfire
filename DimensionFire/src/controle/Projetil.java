@@ -4,9 +4,8 @@ package controle;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
-public class Inimigo {
-
-    private BufferedImage parada;
+public class Projetil {
+    
     private BufferedImage direita_baixo;
     private BufferedImage direita_cima;
     private BufferedImage esquerda_baixo;
@@ -22,36 +21,28 @@ public class Inimigo {
     private int velY;
     private BufferedImage imgAtual;
     private int velocidade;
+    private int direction;
+    Principal p = new Principal();
+    private boolean ativo = false;
 
-    public Inimigo() {
+    public Projetil() {
 
         try {
-            setParada(ImageIO.read(getClass().getResource("/imgs/parada.gif")));
-            setDireita_cima(ImageIO.read(getClass().getResource("/imgs/direita_cima.gif")));
-            setDireita_baixo(ImageIO.read(getClass().getResource("/imgs/direita_baixo.gif")));
-            setEsquerda_cima(ImageIO.read(getClass().getResource("/imgs/esquerda_cima.gif")));
-            setEsquerda_baixo(ImageIO.read(getClass().getResource("/imgs/esquerda_baixo.gif")));
-            setBaixo(ImageIO.read(getClass().getResource("/imgs/baixo.gif")));
-            setCima(ImageIO.read(getClass().getResource("/imgs/cima.gif")));
-            setDireita(ImageIO.read(getClass().getResource("/imgs/direita.gif")));
-            setEsquerda(ImageIO.read(getClass().getResource("/imgs/esquerda.gif")));
+            setDireita_cima(ImageIO.read(getClass().getResource("/imgs/parada2.gif")));
+            setDireita_baixo(ImageIO.read(getClass().getResource("/imgs/parada2.gif")));
+            setEsquerda_cima(ImageIO.read(getClass().getResource("/imgs/parada2.gif")));
+            setEsquerda_baixo(ImageIO.read(getClass().getResource("/imgs/parada2.gif")));
+            setBaixo(ImageIO.read(getClass().getResource("/imgs/parada2.gif")));
+            setCima(ImageIO.read(getClass().getResource("/imgs/parada2.gif")));
+            setDireita(ImageIO.read(getClass().getResource("/imgs/parada2.gif")));
+            setEsquerda(ImageIO.read(getClass().getResource("/imgs/parada2.gif")));
         } catch (Exception e) {
             e.printStackTrace();
         }
-        setPosX(200);
-        setPosY(100);
-        setRaio(50);
+        setRaio(25);
         setVelX(0);
         setVelY(0);
         setVelocidade(3);
-    }
-
-    public BufferedImage getParada() {
-        return parada;
-    }
-
-    public void setParada(BufferedImage parada) {
-        this.parada = parada;
     }
 
     public BufferedImage getDireita_baixo() {
@@ -166,43 +157,65 @@ public class Inimigo {
         this.imgAtual = imgAtual;
     }
     
-    public void mover(boolean kup,  boolean kright, boolean kdown, boolean kleft) {
-        setImgAtual(getParada());
-        if (kup == true) {
+    public void mover() {
+        if(ativo){
+            switch(getDirection()){
+                case 1: 
+                    setVelY(-getVelocidade()); 
+                    break;
+                case 2: break;
+                case 3: break;
+                case 4: break;
+            }
+            if(getPosX() >= p.LARGURA_TELA || getPosY() >= p.ALTURA_TELA || getPosX() <=0 || getPosY() <= 0 ){
+                ativo = false;
+            }
+        }
+        /*if (direction_up == true) {
             setVelY(-getVelocidade());
             setImgAtual(getCima());
-            if (kleft == true) {
+            if (direction_left == true) {
                 setVelX(-getVelocidade());
                 setImgAtual(getEsquerda_cima());
-            } else if (kright == true) {
+            } else if (direction_right == true) {
                 setVelX(getVelocidade());
                 setImgAtual(getDireita_cima());
             }
-        } else if (kdown == true) {
+        } else if (direction_down == true) {
             setVelY(getVelocidade());
             setImgAtual(getBaixo());
-            if (kleft == true) {
+            if (direction_left == true) {
                 setVelX(-getVelocidade());
                 setImgAtual(getEsquerda_baixo());
-            } else if (kright == true) {
+            } else if (direction_right == true) {
                 setVelX(getVelocidade());
                 setImgAtual(getDireita_baixo());
             }
-        } else if (kright == true) {
+        } else if (direction_right == true) {
             setVelX(getVelocidade());
             setImgAtual(getDireita());
-        } else if (kleft == true) {
+        } else if (direction_left == true) {
             setVelX(-getVelocidade());
             setImgAtual(getEsquerda());
         }
+        */
     }
-
     public int getVelocidade() {
         return velocidade;
     }
-
     public void setVelocidade(int velocidade) {
         this.velocidade = velocidade;
     }
-
+    public int getDirection() {
+        return direction;
+    }
+    public void setDirection(int direction) {
+        this.direction = direction;
+    }
+    public boolean getAtivo() {
+        return ativo;
+    }
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
+    }
 }

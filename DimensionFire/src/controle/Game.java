@@ -1,6 +1,5 @@
 package controle;
 
-
 import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
@@ -15,8 +14,9 @@ import javax.swing.JPanel;
 
 public class Game extends JPanel {
 
-    public Bola bola; // criar um objeto a classe bola
+    public Personagem personagem; // criar um objeto a classe personagem
     public Inimigo inimigo;
+    public Projetil projetil;
     private boolean person_k_cima = false;
     private boolean person_k_baixo = false;
     private boolean person_k_direita = false;
@@ -25,62 +25,28 @@ public class Game extends JPanel {
     private boolean inimigo_k_baixo = false;
     private boolean inimigo_k_direita = false;
     private boolean inimigo_k_esquerda = false;
-    private BufferedImage personagemImgAtual;
-    private BufferedImage inimigoImgAtual;
-    private int mousePosX, mousePosY;
+    private boolean person_k_disparo = false;
     private boolean clicado = false;
 
     public Game() {
+        
+        personagem = new Personagem(); // inicializa o objeto personagem
+        inimigo = new Inimigo(); // inicializa o objeto inimigo
+        //projetil = new Projetil();
+        setFocusable(true);
+        setLayout(null);
 
-        addMouseListener(new MouseListener() {
+        new Thread(new Runnable() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void run() {
+                gameloop();
             }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                if (mousePosX >= bola.posX
-                        && mousePosX <= bola.posX + (bola.raio * 2)
-                        && mousePosY >= bola.posY
-                        && mousePosY <= bola.posY + (bola.raio * 2)) {
-
-                }
-                clicado = true;
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                clicado = false;
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-            }
-        });
-
-        addMouseMotionListener(new MouseMotionListener() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                mousePosX = e.getX();
-                mousePosY = e.getY();
-            }
-
-            @Override
-            public void mouseMoved(MouseEvent e) {
-                mousePosX = e.getX();
-                mousePosY = e.getY();
-            }
-        });
-
+        }).start();
+        
         addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
             }
-
             @Override
             public void keyPressed(KeyEvent e) {
                 switch (e.getKeyCode()) {
@@ -96,23 +62,25 @@ public class Game extends JPanel {
                     case KeyEvent.VK_RIGHT:
                         person_k_direita = true;
                         break;
+                    case KeyEvent.VK_E:
+                        person_k_disparo = true;
+                        break;
                 }
                 switch (e.getKeyCode()) {
-                    case KeyEvent.VK_UP:
+                    case KeyEvent.VK_W:
                         inimigo_k_cima = true;
                         break;
-                    case KeyEvent.VK_DOWN:
+                    case KeyEvent.VK_S:
                         inimigo_k_baixo = true;
                         break;
-                    case KeyEvent.VK_LEFT:
+                    case KeyEvent.VK_A:
                         inimigo_k_esquerda = true;
                         break;
-                    case KeyEvent.VK_RIGHT:
+                    case KeyEvent.VK_D:
                         inimigo_k_direita = true;
                         break;
                 }
             }
-
             @Override
             public void keyReleased(KeyEvent e) {
                 switch (e.getKeyCode()) {
@@ -130,32 +98,21 @@ public class Game extends JPanel {
                         break;
                 }
                 switch (e.getKeyCode()) {
-                    case KeyEvent.VK_UP:
+                    case KeyEvent.VK_W:
                         inimigo_k_cima = false;
                         break;
-                    case KeyEvent.VK_DOWN:
+                    case KeyEvent.VK_S:
                         inimigo_k_baixo = false;
                         break;
-                    case KeyEvent.VK_LEFT:
+                    case KeyEvent.VK_A:
                         inimigo_k_esquerda = false;
                         break;
-                    case KeyEvent.VK_RIGHT:
+                    case KeyEvent.VK_D:
                         inimigo_k_direita = false;
                         break;
                 }
             }
         });
-        bola = new Bola(); // inicializa o objeto bola
-        setFocusable(true);
-        setLayout(null);
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                gameloop();
-            }
-        }).start();
-
     }
 
     // GAMELOOP ----------------------------------
@@ -167,124 +124,31 @@ public class Game extends JPanel {
             try {
                 Thread.sleep(17);
             } catch (InterruptedException ex) {
-                Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex+"aq");
+                Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex + "aq");
             }
         }
+    }
+    public void disparar(){
+        
     }
 
     public void handlerEvents() {
-        bola.velX = 0;
-        bola.velY = 0;
-
-        //inimigo.velX = 0 ;
-        //inimigo.velY = 0 ;
-        moverPersonagem();
-        moverInimigo();
-        personagemImgAtual = bola.parada;
-        inimigoImgAtual = inimigo.parada;
-
-        
+        personagem.setVelX(0);
+        personagem.setVelY(0);
+        inimigo.setVelX(0);
+        inimigo.setVelY(0);
+        personagem.mover(person_k_cima,person_k_direita, person_k_baixo ,person_k_esquerda);
+        inimigo.mover(inimigo_k_cima,inimigo_k_direita, inimigo_k_baixo ,inimigo_k_esquerda);
     }
-    public void moverPersonagem(){
-        if (person_k_cima == true) {
-            bola.velY = -3;
-            personagemImgAtual = bola.cima;
-            if (person_k_esquerda == true) {
-                bola.velX = -3;
-                personagemImgAtual = bola.esquerda_cima;
-            } else if (person_k_direita == true) {
-                bola.velX = 3;
-                personagemImgAtual = bola.direita_cima;
-            }
-        } else if (person_k_baixo == true) {
-            bola.velY = 3;
-            personagemImgAtual = bola.baixo;
-            if (person_k_esquerda == true) {
-                bola.velX = -3;
-                personagemImgAtual = bola.esquerda_baixo;
-            } else if (person_k_direita == true) {
-                bola.velX = 3;
-                personagemImgAtual = bola.direita_baixo;
-            }
-        } else if (person_k_direita == true) {
-            bola.velX = 3;
-            personagemImgAtual = bola.direita;
-        } else if (person_k_esquerda == true) {
-            bola.velX = -3;
-            personagemImgAtual = bola.esquerda;
-        }
-    }
-    public void moverInimigo(){
-        if (inimigo_k_cima == true) {
-            inimigo.velY = -3;
-            inimigoImgAtual = inimigo.cima;
-            if (inimigo_k_esquerda == true) {
-                inimigo.velX = -3;
-                inimigoImgAtual = inimigo.esquerda_cima;
-            } else if (inimigo_k_direita == true) {
-                inimigo.velX = 3;
-                inimigoImgAtual = inimigo.direita_cima;
-            }
-        } else if (inimigo_k_baixo == true) {
-            inimigo.velY = 3;
-            inimigoImgAtual = inimigo.baixo;
-            if (inimigo_k_esquerda == true) {
-                inimigo.velX = -3;
-                inimigoImgAtual = inimigo.esquerda_baixo;
-            } else if (inimigo_k_direita == true) {
-                inimigo.velX = 3;
-                inimigoImgAtual = inimigo.direita_baixo;
-            }
-        } else if (inimigo_k_direita == true) {
-            inimigo.velX = 3;
-            inimigoImgAtual = inimigo.direita;
-        } else if (inimigo_k_esquerda == true) {
-            inimigo.velX = -3;
-            inimigoImgAtual = inimigo.esquerda;
-        }
-    }
-
+    
     public void update() {
-        /*if(clicado==true){
-         bola.posX = mousePosX - bola.raio;
-         bola.posY = mousePosY - bola.raio;
-         }*/
-        if (clicado == true) {
-            int vel = 3;
-            if (bola.posX < mousePosX - bola.raio) {
-                bola.posX = bola.posX + vel;
-                cima_baixo(vel);
-            } else if (bola.posX > mousePosX - bola.raio) {
-                bola.posX = bola.posX - vel;
-                cima_baixo(vel);
-            } else {
-                //bola.posX = bola.posX;
-            }
-            /*if (bola.posY > mousePosY - bola.raio) {
-                bola.posY = bola.posY - vel;
-            } else if (bola.posY < mousePosY - bola.raio) {
-                bola.posY = bola.posY + vel;
-            } else {
-                bola.posY = bola.posY;
-            }*/
-        }
-
-        bola.posX = bola.posX+bola.velX;
-        bola.posY = bola.posY+bola.velY;
-        inimigo.posX = inimigo.posX+inimigo.velX;
-        inimigo.posY = inimigo.posY+inimigo.velY;
+        personagem.setPosX(personagem.getPosX() + personagem.getVelX());
+        personagem.setPosY(personagem.getPosY() + personagem.getVelY());
+        inimigo.setPosX(inimigo.getPosX() + inimigo.getVelX());
+        inimigo.setPosY(inimigo.getPosY() + inimigo.getVelY());
+        //projetil.setPosX(projetil.getPosX() + projetil.getVelX());
+        //projetil.setPosY(projetil.getPosY() + projetil.getVelY());
         testeColisoes();
-
-        //System.out.println(mousePosX + "-" + mousePosY);
-    }
-    public void cima_baixo(int vel){
-        if (bola.posY > mousePosY - bola.raio) {
-                bola.posY = bola.posY - vel;
-            } else if (bola.posY < mousePosY - bola.raio) {
-                bola.posY = bola.posY + vel;
-            } else {
-                bola.posY = bola.posY;
-            }
     }
 
     public void render() {
@@ -293,23 +157,22 @@ public class Game extends JPanel {
 
     // OUTROS MÉTODOS ------------------------------------------
     public void testeColisoes() {
-        if (bola.posX + (bola.raio * 2) >= Principal.LARGURA_TELA) { // lado direito
-            bola.posX = Principal.LARGURA_TELA - (bola.raio * 2);
-        } else if (bola.posX <= 0) { // lado esquerdo
-            bola.posX = 0;
+        if (personagem.getPosX() + (personagem.getRaio() * 2) >= Principal.LARGURA_TELA) { // lado direito
+            personagem.setPosX(Principal.LARGURA_TELA - (personagem.getRaio() * 2));
+        } else if (personagem.getPosX() <= 0) { // lado esquerdo
+            personagem.setPosX(0);
         }
-
-        if (bola.posY + (bola.raio * 2) >= Principal.ALTURA_TELA) { // lado infeiror
-            bola.posY = Principal.ALTURA_TELA - (bola.raio * 2);
-        } else if (bola.posY <= 0) { // lado superior
-            bola.posY = 0;
+        if (personagem.getPosY() + (personagem.getRaio() * 2) >= Principal.ALTURA_TELA) { // lado infeiror
+            personagem.setPosY(Principal.ALTURA_TELA - (personagem.getRaio() * 2));
+        } else if (personagem.getPosY() <= 0) { // lado superior
+            personagem.setPosY(0);
         }
         /*
-         if(bola.posX+(bola.raio*2)>=Principal.LARGURA_TELA || bola.posX<=0){
-         bola.posX = bola.posX-bola.velX;
+         if(personagem.posX+(personagem.raio*2)>=Principal.LARGURA_TELA || personagem.posX<=0){
+         personagem.posX = personagem.posX-personagem.velX;
          }
-         if(bola.posY+(bola.raio*2)>=Principal.ALTURA_TELA || bola.posY<=0){
-         bola.posY =bola.posY-bola.velY;
+         if(personagem.posY+(personagem.raio*2)>=Principal.ALTURA_TELA || personagem.posY<=0){
+         personagem.posY =personagem.posY-personagem.velY;
          }*/
     }
 
@@ -318,8 +181,7 @@ public class Game extends JPanel {
         super.paintComponent(g);
         setBackground(Color.LIGHT_GRAY);
         g.setColor(Color.RED);
-        //g.fillOval(bola.posX, bola.posY, bola.raio*2, bola.raio*2);
-        g.drawImage(personagemImgAtual, bola.posX, bola.posY, null);
-        //g.drawImage(inimigoImgAtual, inimigo.posX, inimigo.posY, null);
+        g.drawImage(personagem.getImgAtual(), personagem.getPosX(), personagem.getPosY(), null);
+        g.drawImage(inimigo.getImgAtual(), inimigo.getPosX(), inimigo.getPosY(), null);
     }
 }
