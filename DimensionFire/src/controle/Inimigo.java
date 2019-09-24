@@ -22,6 +22,7 @@ public class Inimigo {
     private int velY;
     private BufferedImage imgAtual;
     private int velocidade;
+    private int hp;
 
     public Inimigo() {
 
@@ -38,12 +39,13 @@ public class Inimigo {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        setPosX(200);
-        setPosY(100);
+        setPosX(400);
+        setPosY(10);
         setRaio(50);
         setVelX(0);
         setVelY(0);
         setVelocidade(3);
+        setHp(100);
     }
 
     public BufferedImage getParada() {
@@ -203,6 +205,14 @@ public class Inimigo {
 
     public void setVelocidade(int velocidade) {
         this.velocidade = velocidade;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
     }
 
 }

@@ -5,7 +5,7 @@ import static controle.Principal.ALTURA_TELA;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
-public class Projetil {
+public class  Projetil {
     
     private BufferedImage direita_baixo;
     private BufferedImage direita_cima;
@@ -25,6 +25,7 @@ public class Projetil {
     private String direcao;
     //Principal p = new Principal();
     private boolean ativo = false;
+    private int dano;
 
     public Projetil() {
 
@@ -43,7 +44,8 @@ public class Projetil {
         setRaio(25);
         setVelX(0);
         setVelY(0);
-        setVelocidade(15);
+        setVelocidade(10);
+        setDano(1);
     }
 
     public BufferedImage getDireita_baixo() {
@@ -232,5 +234,13 @@ public class Projetil {
 
     public void setDirecao(String direcao) {
         this.direcao = direcao;
+    }
+
+    public int getDano() {
+        return dano;
+    }
+
+    public void setDano(int dano) {
+        this.dano = dano;
     }
 }
