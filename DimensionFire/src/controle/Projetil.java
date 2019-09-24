@@ -1,6 +1,7 @@
 package controle;
 
 
+import static controle.Principal.ALTURA_TELA;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
 
@@ -21,8 +22,8 @@ public class Projetil {
     private int velY;
     private BufferedImage imgAtual;
     private int velocidade;
-    private int direction;
-    Principal p = new Principal();
+    private String direcao;
+    //Principal p = new Principal();
     private boolean ativo = false;
 
     public Projetil() {
@@ -42,7 +43,7 @@ public class Projetil {
         setRaio(25);
         setVelX(0);
         setVelY(0);
-        setVelocidade(3);
+        setVelocidade(15);
     }
 
     public BufferedImage getDireita_baixo() {
@@ -156,49 +157,61 @@ public class Projetil {
     public void setImgAtual(BufferedImage imgAtual) {
         this.imgAtual = imgAtual;
     }
-    
+    int i=0;
     public void mover() {
-        if(ativo){
-            switch(getDirection()){
-                case 1: 
-                    setVelY(-getVelocidade()); 
+
+            switch(getDirecao()){
+                case "up": 
+                    setPosY(getPosY()-getVelocidade());
+                    setImgAtual(getCima());
+                    //System.out.println("UP : "+ getPosY());
                     break;
-                case 2: break;
-                case 3: break;
-                case 4: break;
+                case "up-right": 
+                    setPosY(getPosY()-getVelocidade());
+                    setPosX(getPosX()+getVelocidade());
+                    setImgAtual(getDireita_cima());
+                    //System.out.println("UP-RIGHT : X"+getPosX()+" Y"+ getPosY());
+                    break;
+                case "up-left": 
+                    setPosY(getPosY()-getVelocidade());
+                    setPosX(getPosX()-getVelocidade());
+                    setImgAtual(getEsquerda_cima());
+                    //System.out.println("UP-LEFT : X"+getPosX()+" Y"+ getPosY());
+                    break;
+                case "right": 
+                    setPosX(getPosX()+getVelocidade());
+                    setImgAtual(getDireita());
+                    //System.out.println("RIGHT : X"+getPosX()+" Y"+ getPosY());
+                    break;
+                case "left": 
+                    setPosX(getPosX()-getVelocidade());
+                    setImgAtual(getEsquerda());
+                    //System.out.println("LEFT : X"+getPosX()+" Y"+ getPosY());
+                    break;    
+                case "down": 
+                    setPosY(getPosY()+getVelocidade());
+                    setImgAtual(getEsquerda_cima());
+                    //System.out.println("DOWN : X"+getPosX()+" Y"+ getPosY());
+                    break;
+                case "down-left": 
+                    setPosY(getPosY()+getVelocidade());
+                    setPosX(getPosX()-getVelocidade());
+                    setImgAtual(getEsquerda_cima());
+                    //System.out.println("DOWN-LEFT : X"+getPosX()+" Y"+ getPosY());
+                    break;
+                case "down-right": 
+                    setPosY(getPosY()+getVelocidade());
+                    setPosX(getPosX()+getVelocidade());
+                    setImgAtual(getEsquerda_cima());
+                    //System.out.println("DOWN-RIGHT : X"+getPosX()+" Y"+ getPosY());
+                    break;    
+                    
             }
-            if(getPosX() >= p.LARGURA_TELA || getPosY() >= p.ALTURA_TELA || getPosX() <=0 || getPosY() <= 0 ){
-                ativo = false;
+            if(getPosX() >= Principal.LARGURA_TELA || getPosY() >= ALTURA_TELA || getPosX() <=0 || getPosY() <= 0 ){
+                this.ativo = false;
+                this.i = 0;
+                setDirecao("invisivel");
             }
-        }
-        /*if (direction_up == true) {
-            setVelY(-getVelocidade());
-            setImgAtual(getCima());
-            if (direction_left == true) {
-                setVelX(-getVelocidade());
-                setImgAtual(getEsquerda_cima());
-            } else if (direction_right == true) {
-                setVelX(getVelocidade());
-                setImgAtual(getDireita_cima());
-            }
-        } else if (direction_down == true) {
-            setVelY(getVelocidade());
-            setImgAtual(getBaixo());
-            if (direction_left == true) {
-                setVelX(-getVelocidade());
-                setImgAtual(getEsquerda_baixo());
-            } else if (direction_right == true) {
-                setVelX(getVelocidade());
-                setImgAtual(getDireita_baixo());
-            }
-        } else if (direction_right == true) {
-            setVelX(getVelocidade());
-            setImgAtual(getDireita());
-        } else if (direction_left == true) {
-            setVelX(-getVelocidade());
-            setImgAtual(getEsquerda());
-        }
-        */
     }
     public int getVelocidade() {
         return velocidade;
@@ -206,16 +219,18 @@ public class Projetil {
     public void setVelocidade(int velocidade) {
         this.velocidade = velocidade;
     }
-    public int getDirection() {
-        return direction;
-    }
-    public void setDirection(int direction) {
-        this.direction = direction;
-    }
     public boolean getAtivo() {
         return ativo;
     }
     public void setAtivo(boolean ativo) {
         this.ativo = ativo;
+    }
+
+    public String getDirecao() {
+        return direcao;
+    }
+
+    public void setDirecao(String direcao) {
+        this.direcao = direcao;
     }
 }

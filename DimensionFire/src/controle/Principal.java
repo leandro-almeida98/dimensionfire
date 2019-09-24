@@ -30,9 +30,9 @@ public class Principal {
         //new Inicio_tela().setVisible(true);
         new Principal();
         //Syst
-        Conexao con = new Conexao();
+        /*Conexao con = new Conexao();
         con.ConectarMysql();
-        System.out.println(con.statusConection());
+        System.out.println(con.statusConection());*/
     }
 
 }

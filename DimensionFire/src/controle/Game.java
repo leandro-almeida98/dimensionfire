@@ -32,7 +32,7 @@ public class Game extends JPanel {
         
         personagem = new Personagem(); // inicializa o objeto personagem
         inimigo = new Inimigo(); // inicializa o objeto inimigo
-        //projetil = new Projetil();
+        projetil = new Projetil();
         setFocusable(true);
         setLayout(null);
 
@@ -62,7 +62,7 @@ public class Game extends JPanel {
                     case KeyEvent.VK_RIGHT:
                         person_k_direita = true;
                         break;
-                    case KeyEvent.VK_E:
+                    case KeyEvent.VK_SPACE:
                         person_k_disparo = true;
                         break;
                 }
@@ -137,17 +137,29 @@ public class Game extends JPanel {
         personagem.setVelY(0);
         inimigo.setVelX(0);
         inimigo.setVelY(0);
+        
+        if(person_k_disparo){
+            projetil.setDirecao(personagem.getDirecao());
+            projetil.setPosX(personagem.getPosX()+personagem.getRaio());
+            projetil.setPosY(personagem.getPosY()+personagem.getRaio());
+            projetil.setAtivo(true);
+            person_k_disparo=false;
+        }
+        
         personagem.mover(person_k_cima,person_k_direita, person_k_baixo ,person_k_esquerda);
         inimigo.mover(inimigo_k_cima,inimigo_k_direita, inimigo_k_baixo ,inimigo_k_esquerda);
     }
+
     
     public void update() {
         personagem.setPosX(personagem.getPosX() + personagem.getVelX());
         personagem.setPosY(personagem.getPosY() + personagem.getVelY());
         inimigo.setPosX(inimigo.getPosX() + inimigo.getVelX());
         inimigo.setPosY(inimigo.getPosY() + inimigo.getVelY());
-        //projetil.setPosX(projetil.getPosX() + projetil.getVelX());
-        //projetil.setPosY(projetil.getPosY() + projetil.getVelY());
+        
+        if(projetil.getAtivo()){
+            projetil.mover();
+        }
         testeColisoes();
     }
 
@@ -157,6 +169,8 @@ public class Game extends JPanel {
 
     // OUTROS MÉTODOS ------------------------------------------
     public void testeColisoes() {
+        
+        // COLISÃO NAS BORDA DA TELA TELA
         if (personagem.getPosX() + (personagem.getRaio() * 2) >= Principal.LARGURA_TELA) { // lado direito
             personagem.setPosX(Principal.LARGURA_TELA - (personagem.getRaio() * 2));
         } else if (personagem.getPosX() <= 0) { // lado esquerdo
@@ -167,13 +181,21 @@ public class Game extends JPanel {
         } else if (personagem.getPosY() <= 0) { // lado superior
             personagem.setPosY(0);
         }
-        /*
-         if(personagem.posX+(personagem.raio*2)>=Principal.LARGURA_TELA || personagem.posX<=0){
-         personagem.posX = personagem.posX-personagem.velX;
-         }
-         if(personagem.posY+(personagem.raio*2)>=Principal.ALTURA_TELA || personagem.posY<=0){
-         personagem.posY =personagem.posY-personagem.velY;
-         }*/
+        
+        if (inimigo.getPosX() + (inimigo.getRaio() * 2) >= Principal.LARGURA_TELA) { // lado direito
+            inimigo.setPosX(Principal.LARGURA_TELA - (inimigo.getRaio() * 2));
+        }else if (inimigo.getPosX() <= 0) { // lado esquerdo
+            inimigo.setPosX(0);
+        }
+        if (inimigo.getPosY() + (inimigo.getRaio() * 2) >= Principal.ALTURA_TELA) { // lado infeiror
+            inimigo.setPosY(Principal.ALTURA_TELA - (inimigo.getRaio() * 2));
+        } else if (inimigo.getPosY() <= 0) { // lado superior
+            inimigo.setPosY(0);
+        }
+        
+
+        
+        
     }
 
     @Override
@@ -183,5 +205,8 @@ public class Game extends JPanel {
         g.setColor(Color.RED);
         g.drawImage(personagem.getImgAtual(), personagem.getPosX(), personagem.getPosY(), null);
         g.drawImage(inimigo.getImgAtual(), inimigo.getPosX(), inimigo.getPosY(), null);
+        if(projetil.getAtivo()){
+             g.drawImage(projetil.getImgAtual(), projetil.getPosX(), projetil.getPosY(), null);
+        }
     }
 }

@@ -23,6 +23,7 @@ public class Personagem {
     private int velY;
     private BufferedImage imgAtual;
     private int velocidade;
+    private String direcao;
 
     public Personagem() {
         try {
@@ -38,8 +39,8 @@ public class Personagem {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        setPosX(200);
-        setPosY(100);
+        setPosX(100);
+        setPosY(300);
         setRaio(50);
         setVelX(0);
         setVelY(0);
@@ -165,38 +166,6 @@ public class Personagem {
     public void setImgAtual(BufferedImage imgAtual) {
         this.imgAtual = imgAtual;
     }
-    
-    public void mover(boolean kup,  boolean kright, boolean kdown, boolean kleft) {
-        setImgAtual(getParada());
-        if (kup == true) {
-            setVelY(-getVelocidade());
-            setImgAtual(getCima());
-            if (kleft == true) {
-                setVelX(-getVelocidade());
-                setImgAtual(getEsquerda_cima());
-            } else if (kright == true) {
-                setVelX(getVelocidade());
-                setImgAtual(getDireita_cima());
-            }
-        } else if (kdown == true) {
-            setVelY(getVelocidade());
-            setImgAtual(getBaixo());
-            if (kleft == true) {
-                setVelX(-getVelocidade());
-                setImgAtual(getEsquerda_baixo());
-            } else if (kright == true) {
-                setVelX(getVelocidade());
-                setImgAtual(getDireita_baixo());
-            }
-        } else if (kright == true) {
-            setVelX(getVelocidade());
-            setImgAtual(getDireita());
-        } else if (kleft == true) {
-            setVelX(-getVelocidade());
-            setImgAtual(getEsquerda());
-        }
-    }
-
     public int getVelocidade() {
         return velocidade;
     }
@@ -204,6 +173,48 @@ public class Personagem {
     public void setVelocidade(int velocidade) {
         this.velocidade = velocidade;
     }
+    
+    public void mover(boolean kup,  boolean kright, boolean kdown, boolean kleft) {
+        setImgAtual(getParada());
+        if (kup == true) {
+            setVelY(-getVelocidade());
+            setImgAtual(getCima());
+            setDirecao("up");
+            if (kleft == true) {
+                setVelX(-getVelocidade());
+                setImgAtual(getEsquerda_cima());
+                setDirecao("up-left");
+            } else if (kright == true) {
+                setVelX(getVelocidade());
+                setImgAtual(getDireita_cima());
+                setDirecao("up-right");
+            }
+        } else if (kdown == true) {
+            setVelY(getVelocidade());
+            setImgAtual(getBaixo());
+            setDirecao("down");
+            if (kleft == true) {
+                setVelX(-getVelocidade());
+                setImgAtual(getEsquerda_baixo());
+                setDirecao("down-left");
+            } else if (kright == true) {
+                setVelX(getVelocidade());
+                setImgAtual(getDireita_baixo());
+                setDirecao("down-right");
+            }
+        } else if (kright == true) {
+            setVelX(getVelocidade());
+            setImgAtual(getDireita());
+            setDirecao("right");
+            
+        } else if (kleft == true) {
+            setVelX(-getVelocidade());
+            setImgAtual(getEsquerda());
+            setDirecao("left");
+        }
+    }
+
+    
 
     
     /*public void comandos(){
@@ -222,4 +233,14 @@ public class Personagem {
                 break;
         }
     }*/
+
+    public String getDirecao() {
+        return direcao;
+    }
+
+    public void setDirecao(String direcao) {
+        this.direcao = direcao;
+    }
+
+   
 }
