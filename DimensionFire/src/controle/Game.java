@@ -8,8 +8,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 public class Game extends JPanel {
@@ -17,6 +20,8 @@ public class Game extends JPanel {
     public Personagem personagem; // criar um objeto a classe personagem
     public Inimigo inimigo;
     public Projetil projetil;
+    public Obstaculos obstaculo;
+    public ObstaculoList obsLista;
     public ProjetilsAtivo projetilAtivo;
     private boolean person_k_cima = false;
     private boolean person_k_baixo = false;
@@ -36,6 +41,24 @@ public class Game extends JPanel {
         projetilAtivo = new ProjetilsAtivo();
         setFocusable(true);
         setLayout(null);
+        obsLista = new ObstaculoList();
+
+        Random gerador = new Random();
+
+        for (int i = 0; i < 5;) {
+            obstaculo = new Obstaculos();
+            obstaculo.setRaio(gerador.nextInt(30));
+            
+            try {
+                obstaculo.setImg(ImageIO.read(getClass().getResource("/imgs/parada.gif")));
+            } catch (IOException ex) {
+                Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            obstaculo.setPosX(gerador.nextInt(Principal.LARGURA_TELA));
+            obstaculo.setPosY(gerador.nextInt(Principal.LARGURA_TELA));
+            obsLista.setObstaculo_list(obstaculo);
+            i++;
+        }
 
         new Thread(new Runnable() {
             @Override
@@ -215,26 +238,60 @@ public class Game extends JPanel {
             personagem.setPosY(personagem.getPosY() - personagem.getVelY()); // desfaz o movimento
         }
 
-        //COLISÃO PROJETIL
+        //COLISÃO PROJETIL COM PERSONAGEM
         if (projetilAtivo.getlist_ativos().size() > 0) {
             for (int i = 0; i < projetilAtivo.getlist_ativos().size();) {
                 catetoH = projetilAtivo.getlist_ativos().get(i).getPosX() - inimigo.getPosX();
                 catetoV = projetilAtivo.getlist_ativos().get(i).getPosY() - inimigo.getPosY();
                 hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
                 if (hipotenusa <= projetilAtivo.getlist_ativos().get(i).getRaio() + inimigo.getRaio()) { // verifica se houve colisão circular
-                    
-                    inimigo.setHp(inimigo.getHp()-projetilAtivo.getlist_ativos().get(i).getDano());
-                    int restant = (inimigo.getHp())-(projetilAtivo.getlist_ativos().get(i).getDano());
-                    
-                    if(restant>0){System.out.println("Hp: "+restant);}
-                    if(inimigo.getHp()==0){
+
+                    inimigo.setHp(inimigo.getHp() - projetilAtivo.getlist_ativos().get(i).getDano());
+                    int restant = (inimigo.getHp()) - (projetilAtivo.getlist_ativos().get(i).getDano());
+
+                    if (restant > 0) {
+                        System.out.println("Hp: " + restant);
+                    }
+                    if (inimigo.getHp() == 0) {
                         System.out.println("Dead");
                     }
-                    
+
                 }
                 i++;
             }
         }
+        //COLISÃO DO PROJETIL COM OS OBSTACULOS
+        if (projetilAtivo.getlist_ativos().size() > 0) {
+            for (int i = 0; i < projetilAtivo.getlist_ativos().size();) {
+                for (int y = 0; y < obsLista.getObstaculo_list().size();) {
+                    catetoH = projetilAtivo.getlist_ativos().get(i).getPosX() - obsLista.getObstaculo_list().get(y).getPosX();
+                    catetoV = projetilAtivo.getlist_ativos().get(i).getPosY() - obsLista.getObstaculo_list().get(y).getPosY();
+                    hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
+                    if (hipotenusa <= projetilAtivo.getlist_ativos().get(i).getRaio() + obsLista.getObstaculo_list().get(y).getRaio()) { // verifica se houve colisão circular
+                        projetilAtivo.getlist_ativos().get(i).setAtivo(false);
+                    }
+                    y++;
+                }    
+                i++;
+            }
+        }
+        
+
+        // COLISÃO DO PERSONAGEM COM OS OBSTACULO DO MAPA
+        for (int i = 0; i < obsLista.getObstaculo_list().size();) {
+            catetoH = personagem.getPosX() - obsLista.getObstaculo_list().get(i).getPosX() ;
+            catetoV = personagem.getPosY() - obsLista.getObstaculo_list().get(i).getPosY() ;
+            hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
+            if (hipotenusa <= obsLista.getObstaculo_list().get(i).getRaio() + personagem.getRaio()) { // verifica se houve colisão circular
+
+              personagem.setPosX(personagem.getPosX() - personagem.getVelX()); // desfaz o movimento
+                personagem.setPosY(personagem.getPosY() - personagem.getVelY()); // desfaz o movimento
+            }
+            i++;
+        }
+        
+        //
+        
 
     }
 
@@ -245,7 +302,6 @@ public class Game extends JPanel {
         //g.setColor(Color.RED);
         g.drawImage(personagem.getImgAtual(), personagem.getPosX(), personagem.getPosY(), null);
         g.drawImage(inimigo.getImgAtual(), inimigo.getPosX(), inimigo.getPosY(), null);
-
         if (projetilAtivo.getlist_ativos().size() > 0) {
             for (int i = 0; i < projetilAtivo.getlist_ativos().size();) {
                 if (projetilAtivo.getlist_ativos().get(i).getAtivo()) {
@@ -254,5 +310,11 @@ public class Game extends JPanel {
                 i++;
             }
         }
+        //GERADOR DOS OBSTACULOS
+        for (int i = 0; i < obsLista.getObstaculo_list().size();) {
+            g.drawImage(obsLista.getObstaculo_list().get(i).getImg(), obsLista.getObstaculo_list().get(i).getPosX(), obsLista.getObstaculo_list().get(i).getPosY(), null);
+            i++;
+        }
+
     }
 }
