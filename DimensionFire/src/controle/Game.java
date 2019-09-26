@@ -4,7 +4,11 @@ import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Iterator;
+import java.util.Queue;
 import java.util.Random;
+import java.util.Stack;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
@@ -13,7 +17,8 @@ public class Game extends JPanel {
 
     public Personagem personagem; // criar um objeto a classe personagem
     public Inimigo inimigo;
-    public Projetil projetil;
+    public ArrayBlockingQueue<Projetil> estoqueMunicao;
+    public ArrayBlockingQueue<Projetil> estoqueMunicaoAtiva;
     public Obstaculos obstaculo;
     public ObstaculoList obsLista;
     public Som som ;
@@ -36,6 +41,17 @@ public class Game extends JPanel {
         projetilAtivo = new ProjetilsAtivo();
         setFocusable(true);
         setLayout(null);
+        
+        // inicializa o estoque de munição
+        estoqueMunicao = new ArrayBlockingQueue<Projetil>(20);
+        estoqueMunicaoAtiva = new ArrayBlockingQueue<Projetil>(20);
+        for(int i = 0; i < 20; i++){
+            try{
+                estoqueMunicao.put(new Projetil());
+            }catch(InterruptedException e){
+                e.printStackTrace();
+            }
+        }
         
         obsLista = new ObstaculoList();
         Random gerador = new Random();
@@ -169,14 +185,19 @@ public class Game extends JPanel {
         // A CADA VEZ QUE PRESIONAR ESPAÇO, UM NOVO PROJETIL É CRIADO
         if (person_k_disparo) {
             som = new Som();
-            projetil = new Projetil();
-            som.Shoot();
-            projetil.setDirecao(personagem.getDirecao());
-            projetil.setPosX(personagem.getPosX() + personagem.getRaio());
-            projetil.setPosY(personagem.getPosY() + personagem.getRaio());
-            projetil.setAtivo(true);
-            projetilAtivo.setlist_ativos(projetil);
-            person_k_disparo = false;
+             
+            try{
+                Projetil projetil = estoqueMunicao.take();
+                projetil.setDirecao(personagem.getDirecao());
+                projetil.setPosX(personagem.getPosX() + personagem.getRaio());
+                projetil.setPosY(personagem.getPosY() + personagem.getRaio());
+                projetil.setAtivo(true);
+                person_k_disparo = false;
+                estoqueMunicaoAtiva.add(projetil);
+            }catch(InterruptedException e){
+                e.printStackTrace();
+            }
+            
         }
         if(person_k_correr){
             personagem.setVelocidade(6);
@@ -196,15 +217,10 @@ public class Game extends JPanel {
         inimigo.setPosY(inimigo.getPosY() + inimigo.getVelY());
         // VERIFICA SE O PROJETIL ESTÁ NO ESTADO ATIVO, SE ESTIVER, ELE MOVIMENTA ESSE PROJETIL
         // O PROJETIL É ATIVO ENQUANTO A SUA POSIÇÃO FOR DIFERENTE DA POSIÇÃO DO SEU DESTINO
-        if (projetilAtivo.getlist_ativos().size() > 0) {
-            for (int i = 0; i < projetilAtivo.getlist_ativos().size();) {
-                if (projetilAtivo.getlist_ativos().get(i).getAtivo()) {
-                    projetilAtivo.getlist_ativos().get(i).mover();
-                } else {
-                    projetilAtivo.getlist_ativos().remove(i);
-                }
-                i++;
-            }
+        
+        for(Iterator i = estoqueMunicaoAtiva.iterator(); i.hasNext();){
+            Projetil atual = (Projetil) i.next();
+            atual.mover();
         }
         testeColisoes();
     }
@@ -245,9 +261,38 @@ public class Game extends JPanel {
             personagem.setPosY(personagem.getPosY() - personagem.getVelY()); // desfaz o movimento
         }
 
-        //COLISÃO PROJETIL COM PERSONAGEM
-        if (projetilAtivo.getlist_ativos().size() > 0) {
-            for (int i = 0; i < projetilAtivo.getlist_ativos().size();) {
+        //percorrer todos os projeteis ativos para testar as suas colisões
+       for(Iterator i = estoqueMunicaoAtiva.iterator(); i.hasNext();){
+            Projetil atual = (Projetil) i.next();
+            // checar a colisão do projétil as tela
+            if(atual.getPosX()>= Principal.LARGURA_TELA ||
+                    atual.getPosX() <=0 ||
+                    atual.getPosY() >= Principal.ALTURA_TELA ||
+                    atual.getPosY() <= 0){
+                try{
+                    estoqueMunicao.put(estoqueMunicaoAtiva.take());
+                }catch(InterruptedException e){
+                    e.printStackTrace();
+                }
+            }
+            
+            // checar a colisão do projétil com o personagem
+            catetoH = atual.getPosX() - inimigo.getPosX();
+            catetoV = atual.getPosY() - inimigo.getPosY();
+            hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
+            if(hipotenusa <= atual.getRaio() + inimigo.getRaio()){
+                if (inimigo.getVivo()) {
+                    inimigo.recebeDano(atual.getDano()); // RETIRA HP DO INIMIGO
+                    System.out.println("Hp: " + inimigo.getHp());   
+                    if (!inimigo.getVivo()) {
+                        System.out.println("Dead");
+                    }  
+                }
+            }
+            
+        }
+                
+           /* for (int i = 0; i < projetilAtivo.getlist_ativos().size();) {
                 catetoH = projetilAtivo.getlist_ativos().get(i).getPosX() - inimigo.getPosX();
                 catetoV = projetilAtivo.getlist_ativos().get(i).getPosY() - inimigo.getPosY();
                 hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
@@ -278,7 +323,7 @@ public class Game extends JPanel {
                 i++;
             }
         }
-
+        */
         // COLISÃO DO PERSONAGEM COM OS OBSTACULO DO MAPA
         for (int i = 0; i < obsLista.getObstaculo_list().size();) {
             catetoH = personagem.getPosX() - obsLista.getObstaculo_list().get(i).getPosX() ;
@@ -299,14 +344,11 @@ public class Game extends JPanel {
         //g.setColor(Color.RED);
         g.drawImage(personagem.getImgAtual(), personagem.getPosX(), personagem.getPosY(), null);
         g.drawImage(inimigo.getImgAtual(), inimigo.getPosX(), inimigo.getPosY(), null);
-        if (projetilAtivo.getlist_ativos().size() > 0) {
-            for (int i = 0; i < projetilAtivo.getlist_ativos().size();) {
-                if (projetilAtivo.getlist_ativos().get(i).getAtivo()) {
-                    g.drawImage(projetilAtivo.getlist_ativos().get(i).getImgAtual(), projetilAtivo.getlist_ativos().get(i).getPosX(), projetilAtivo.getlist_ativos().get(i).getPosY(), null);
-                }
-                i++;
-            }
-        }
+       for(Iterator i = estoqueMunicaoAtiva.iterator(); i.hasNext();){
+            Projetil atual = (Projetil) i.next();
+            g.drawImage(atual.getImgAtual(), atual.getPosX(), atual.getPosY(), null);
+        }      
+      
         //GERADOR DOS OBSTACULOS
         for (int i = 0; i < obsLista.getObstaculo_list().size();) {
             g.drawImage(obsLista.getObstaculo_list().get(i).getImg(), obsLista.getObstaculo_list().get(i).getPosX(), obsLista.getObstaculo_list().get(i).getPosY(), null);
