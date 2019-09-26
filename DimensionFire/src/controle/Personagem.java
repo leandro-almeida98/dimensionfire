@@ -24,6 +24,8 @@ public class Personagem {
     private BufferedImage imgAtual;
     private int velocidade;
     private String direcao;
+    private int hp;
+    private boolean vivo;
 
     public Personagem() {
         try {
@@ -45,6 +47,8 @@ public class Personagem {
         setVelX(0);
         setVelY(0);
         setVelocidade(3);
+        setVivo(true);
+        setHp(100);
     }
 
     public BufferedImage getParada() {
@@ -214,32 +218,37 @@ public class Personagem {
         }
     }
 
-    
-
-    
-    /*public void comandos(){
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_UP:
-                person_k_cima = true;
-                break;
-            case KeyEvent.VK_DOWN:
-                person_k_baixo = true;
-                break;
-            case KeyEvent.VK_LEFT:
-                person_k_esquerda = true;
-                break;
-            case KeyEvent.VK_RIGHT:
-                person_k_direita = true;
-                break;
-        }
-    }*/
-
     public String getDirecao() {
         return direcao;
     }
 
     public void setDirecao(String direcao) {
         this.direcao = direcao;
+    }
+
+    public int getHp() {
+        return hp;
+    }
+
+    public void setHp(int hp) {
+        this.hp = hp;
+    }
+    public void recebeDano(int dano){
+        if(getHp()<=0){
+            if(getVivo()){
+                setVivo(false);
+            }
+        }else{
+            setHp(getHp() - dano);
+        }
+    }
+
+    public boolean getVivo() {
+        return vivo;
+    }
+
+    public void setVivo(boolean vivo) {
+        this.vivo = vivo;
     }
 
    

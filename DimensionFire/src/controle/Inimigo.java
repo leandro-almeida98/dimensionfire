@@ -23,6 +23,7 @@ public class Inimigo {
     private BufferedImage imgAtual;
     private int velocidade;
     private int hp;
+    private boolean vivo;
 
     public Inimigo() {
 
@@ -46,6 +47,7 @@ public class Inimigo {
         setVelY(0);
         setVelocidade(3);
         setHp(100);
+        setVivo(true);
     }
 
     public BufferedImage getParada() {
@@ -213,6 +215,23 @@ public class Inimigo {
 
     public void setHp(int hp) {
         this.hp = hp;
+    }
+    public void recebeDano(int dano){
+        if(getHp()<=0){
+            if(getVivo()){
+                setVivo(false);
+            }
+        }else{
+            setHp(getHp() - dano);
+        }
+    }
+
+    public boolean getVivo() {
+        return vivo;
+    }
+
+    public void setVivo(boolean vivo) {
+        this.vivo = vivo;
     }
 
 }

@@ -23,25 +23,25 @@ public class  Projetil {
     private BufferedImage imgAtual;
     private int velocidade;
     private String direcao;
-    //Principal p = new Principal();
     private boolean ativo = false;
     private int dano;
+    int i=0;
 
     public Projetil() {
 
         try {
-            setDireita_cima(ImageIO.read(getClass().getResource("/imgs/parada2.gif")));
-            setDireita_baixo(ImageIO.read(getClass().getResource("/imgs/parada2.gif")));
-            setEsquerda_cima(ImageIO.read(getClass().getResource("/imgs/parada2.gif")));
-            setEsquerda_baixo(ImageIO.read(getClass().getResource("/imgs/parada2.gif")));
-            setBaixo(ImageIO.read(getClass().getResource("/imgs/parada2.gif")));
-            setCima(ImageIO.read(getClass().getResource("/imgs/parada2.gif")));
-            setDireita(ImageIO.read(getClass().getResource("/imgs/parada2.gif")));
-            setEsquerda(ImageIO.read(getClass().getResource("/imgs/parada2.gif")));
+            setDireita_cima(ImageIO.read(getClass().getResource("/imgs/projetil/projetil_up-right.gif")));
+            setDireita_baixo(ImageIO.read(getClass().getResource("/imgs/projetil/projetil_down-right.gif")));
+            setEsquerda_cima(ImageIO.read(getClass().getResource("/imgs/projetil/projetil_up-left.gif")));
+            setEsquerda_baixo(ImageIO.read(getClass().getResource("/imgs/projetil/projetil_down-left.gif")));
+            setBaixo(ImageIO.read(getClass().getResource("/imgs/projetil/projetil_down.gif")));
+            setCima(ImageIO.read(getClass().getResource("/imgs/projetil/projetil_up.gif")));
+            setDireita(ImageIO.read(getClass().getResource("/imgs/projetil/projetil_right.gif")));
+            setEsquerda(ImageIO.read(getClass().getResource("/imgs/projetil/projetil_left.gif")));
         } catch (Exception e) {
             e.printStackTrace();
         }
-        setRaio(25);
+        setRaio(12);
         setVelX(0);
         setVelY(0);
         setVelocidade(10);
@@ -159,7 +159,9 @@ public class  Projetil {
     public void setImgAtual(BufferedImage imgAtual) {
         this.imgAtual = imgAtual;
     }
-    int i=0;
+    
+    
+    // MOVE O PROJETIL
     public void mover() {
 
             switch(getDirecao()){
@@ -192,22 +194,21 @@ public class  Projetil {
                     break;    
                 case "down": 
                     setPosY(getPosY()+getVelocidade());
-                    setImgAtual(getEsquerda_cima());
+                    setImgAtual(getBaixo());
                     //System.out.println("DOWN : X"+getPosX()+" Y"+ getPosY());
                     break;
                 case "down-left": 
                     setPosY(getPosY()+getVelocidade());
                     setPosX(getPosX()-getVelocidade());
-                    setImgAtual(getEsquerda_cima());
+                    setImgAtual(getEsquerda_baixo());
                     //System.out.println("DOWN-LEFT : X"+getPosX()+" Y"+ getPosY());
                     break;
                 case "down-right": 
                     setPosY(getPosY()+getVelocidade());
                     setPosX(getPosX()+getVelocidade());
-                    setImgAtual(getEsquerda_cima());
+                    setImgAtual(getDireita_baixo());
                     //System.out.println("DOWN-RIGHT : X"+getPosX()+" Y"+ getPosY());
                     break;    
-                    
             }
             if(getPosX() >= Principal.LARGURA_TELA || getPosY() >= ALTURA_TELA || getPosX() <=0 || getPosY() <= 0 ){
                 this.ativo = false;
@@ -225,6 +226,8 @@ public class  Projetil {
         return ativo;
     }
     public void setAtivo(boolean ativo) {
+        Som som = new Som();
+        som.Shoot();
         this.ativo = ativo;
     }
 
