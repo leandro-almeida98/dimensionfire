@@ -18,8 +18,8 @@ public class ObstaculoList {
         return obstaculo_list;
     }
 
-    public void setObstaculo_list(Obstaculos obs) {
-        obstaculo_list.add(obs);
+    public void setObstaculo_list(ArrayList<Obstaculos> obs) {
+        this.obstaculo_list = obs;
     }
 
    

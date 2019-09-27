@@ -211,7 +211,7 @@ public class  Projetil {
                     //System.out.println("DOWN-RIGHT : X"+getPosX()+" Y"+ getPosY());
                     break;    
             }
-            if(getPosX() >= Principal.LARGURA_TELA || getPosY() >= ALTURA_TELA || getPosX() <=0 || getPosY() <= 0 ){
+            if(getPosX() >= Principal.LARGURA_TELA || getPosY() >= Principal.ALTURA_TELA || getPosX() <=0 || getPosY() <= 0 ){
                 this.ativo = false;
                 this.i = 0;
                 setDirecao("invisivel");

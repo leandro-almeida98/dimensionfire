@@ -13,6 +13,9 @@ import java.awt.image.BufferedImage;
  */
 public class Obstaculos {
 
+    
+    public Obstaculos(){
+    }
     private int posX;
     private int posY;
     private int raio;
