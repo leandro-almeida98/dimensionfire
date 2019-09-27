@@ -26,7 +26,7 @@ public class  Projetil {
     private boolean ativo = false;
     private int dano;
     int i=0;
-
+    private Som som; 
     public Projetil() {
 
         try {
@@ -41,6 +41,7 @@ public class  Projetil {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        som = new Som();
         setRaio(12);
         setVelX(0);
         setVelY(0);
@@ -216,6 +217,8 @@ public class  Projetil {
                 setDirecao("invisivel");
             }
     }
+    
+    
     public int getVelocidade() {
         return velocidade;
     }
@@ -226,8 +229,7 @@ public class  Projetil {
         return ativo;
     }
     public void setAtivo(boolean ativo) {
-        Som som = new Som();
-        som.Shoot();
+        getSom().Shoot();
         this.ativo = ativo;
     }
 
@@ -245,5 +247,13 @@ public class  Projetil {
 
     public void setDano(int dano) {
         this.dano = dano;
+    }
+
+    public Som getSom() {
+        return som;
+    }
+
+    public void setSom(Som som) {
+        this.som = som;
     }
 }

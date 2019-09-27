@@ -13,7 +13,7 @@ public class Principal {
 
     public Principal() {
 
-        JFrame janela = new JFrame("Jogo2D");
+        JFrame janela = new JFrame("Dimension Fire");
         Game game = new Game();
         game.setPreferredSize(new Dimension(LARGURA_TELA, ALTURA_TELA));
         janela.getContentPane().add(game);
