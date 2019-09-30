@@ -17,15 +17,15 @@ import javax.imageio.ImageIO;
  * @author Leandro
  */
 public class Mapa  {
-    private Obstaculos obstaculo;
+    private Obstrucoes obstaculo;
     
-    ArrayList<Obstaculos> lista = new ArrayList<Obstaculos>();
+    ArrayList<Obstrucoes> lista = new ArrayList<Obstrucoes>();
 
 
     
-    public ArrayList<Obstaculos> map(){
+    public ArrayList<Obstrucoes> map(){
         try {
-            obstaculo = new Obstaculos();
+            obstaculo = new Obstrucoes();
             obstaculo.setRaio(50);
             obstaculo.setImg(ImageIO.read(getClass().getResource("/imgs/parada2.gif")));
             obstaculo.setPosX(338);
@@ -36,7 +36,7 @@ public class Mapa  {
         }
          
         try {
-            obstaculo = new Obstaculos();
+            obstaculo = new Obstrucoes();
             obstaculo.setRaio(50);
             obstaculo.setImg(ImageIO.read(getClass().getResource("/imgs/parada2.gif")));
             obstaculo.setPosX(150);
@@ -46,7 +46,7 @@ public class Mapa  {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
-            obstaculo = new Obstaculos();
+            obstaculo = new Obstrucoes();
             obstaculo.setRaio(50);
             obstaculo.setImg(ImageIO.read(getClass().getResource("/imgs/parada2.gif")));
             obstaculo.setPosX(50);
@@ -55,6 +55,6 @@ public class Mapa  {
         } catch (IOException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return  lista;
+        return  lista; 
     }
 }

@@ -11,10 +11,10 @@ import java.awt.image.BufferedImage;
  *
  * @author leand
  */
-public class Obstaculos {
+public class Obstrucoes {
 
     
-    public Obstaculos(){
+    public Obstrucoes(){
     }
     private int posX;
     private int posY;

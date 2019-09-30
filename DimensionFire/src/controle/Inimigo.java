@@ -217,7 +217,7 @@ public class Inimigo {
         this.hp = hp;
     }
     public void recebeDano(int dano){
-        if(getHp()<=0){
+        if(getHp()<1){
             if(getVivo()){
                 setVivo(false);
             }

@@ -3,9 +3,10 @@ package controle;
 
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import javax.imageio.ImageIO;
 
-public class Personagem {
+public class Personagem extends Classe{
 
     private BufferedImage parada;
     private BufferedImage direita_baixo;
@@ -26,29 +27,34 @@ public class Personagem {
     private String direcao;
     private int hp;
     private boolean vivo;
+    
+    private long idPerson;
+    
 
     public Personagem() {
         try {
-            setParada(ImageIO.read(getClass().getResource("/imgs/parada.gif")));
-            setDireita_cima(ImageIO.read(getClass().getResource("/imgs/direita_cima.gif")));
-            setDireita_baixo(ImageIO.read(getClass().getResource("/imgs/direita_baixo.gif")));
-            setEsquerda_cima(ImageIO.read(getClass().getResource("/imgs/esquerda_cima.gif")));
-            setEsquerda_baixo(ImageIO.read(getClass().getResource("/imgs/esquerda_baixo.gif")));
-            setBaixo(ImageIO.read(getClass().getResource("/imgs/baixo.gif")));
-            setCima(ImageIO.read(getClass().getResource("/imgs/cima.gif")));
-            setDireita(ImageIO.read(getClass().getResource("/imgs/direita.gif")));
-            setEsquerda(ImageIO.read(getClass().getResource("/imgs/esquerda.gif")));
-        } catch (Exception e) {
-            e.printStackTrace();
+            this.parada         =   ImageIO.read(getClass().getResource("/imgs/parada.gif"));
+            this.direita_cima   =   ImageIO.read(getClass().getResource("/imgs/direita_cima.gif"));
+            this.direita_baixo  =   ImageIO.read(getClass().getResource("/imgs/direita_baixo.gif"));
+            this.esquerda_cima  =   ImageIO.read(getClass().getResource("/imgs/esquerda_cima.gif"));
+            this.esquerda_baixo =   ImageIO.read(getClass().getResource("/imgs/esquerda_baixo.gif"));
+            this.baixo      =   ImageIO.read(getClass().getResource("/imgs/baixo.gif"));
+            this.cima       =   ImageIO.read(getClass().getResource("/imgs/cima.gif"));
+            this.direita    =   ImageIO.read(getClass().getResource("/imgs/direita.gif"));
+            this.esquerda   =   ImageIO.read(getClass().getResource("/imgs/esquerda.gif"));
+        } catch (IOException e) {
+            System.out.println(e);
         }
-        setPosX(100);
-        setPosY(300);
-        setRaio(50);
-        setVelX(0);
-        setVelY(0);
-        setVelocidade(3);
-        setVivo(true);
-        setHp(100);
+        
+        this.idPerson = 1894985646; 
+        this.posX = 100;
+        this.posY = 300;
+        this.raio = 50;
+        this.velX = 0;
+        this.velY = 0;
+        this.velocidade = 3;
+        this.vivo = true;
+        this.hp = 100;
     }
 
     public BufferedImage getParada() {
@@ -250,6 +256,16 @@ public class Personagem {
     public void setVivo(boolean vivo) {
         this.vivo = vivo;
     }
+
+    public long getIdPerson() {
+        return idPerson;
+    }
+
+    public void setIdPerson(long idPerson) {
+        this.idPerson = idPerson;
+    }
+
+
 
    
 }

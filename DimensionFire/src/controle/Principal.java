@@ -16,8 +16,8 @@ public class Principal {
 
     //public static final int LARGURA_TELA = 1600;
     //public static final int ALTURA_TELA = 900;
-    public static final int LARGURA_TELA = 640;
-    public static final int ALTURA_TELA = 480;
+    public static final int LARGURA_TELA = 1024;
+    public static final int ALTURA_TELA = 768;
     public static JProgressBar progresso = new JProgressBar();
 
     public Principal() throws InterruptedException {
@@ -30,10 +30,7 @@ public class Principal {
         //setCursor(new Cursor(Cursor.WAIT_CURSOR));
         //progresso.setVisible(true);
         //progresso.setToolTipText("Aguarde...");
-         
-
         janela.getContentPane().add(game);
-
         //janela.setResizable(false);
         janela.setResizable(false);
         janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

@@ -3,9 +3,10 @@ package controle;
 
 import static controle.Principal.ALTURA_TELA;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
 import javax.imageio.ImageIO;
 
-public class  Projetil {
+public class  Projetil extends Personagem {
     
     private BufferedImage direita_baixo;
     private BufferedImage direita_cima;
@@ -27,26 +28,28 @@ public class  Projetil {
     private int dano;
     int i=0;
     private Som som; 
+    
     public Projetil() {
 
         try {
-            setDireita_cima(ImageIO.read(getClass().getResource("/imgs/projetil/projetil_up-right.gif")));
-            setDireita_baixo(ImageIO.read(getClass().getResource("/imgs/projetil/projetil_down-right.gif")));
-            setEsquerda_cima(ImageIO.read(getClass().getResource("/imgs/projetil/projetil_up-left.gif")));
-            setEsquerda_baixo(ImageIO.read(getClass().getResource("/imgs/projetil/projetil_down-left.gif")));
-            setBaixo(ImageIO.read(getClass().getResource("/imgs/projetil/projetil_down.gif")));
-            setCima(ImageIO.read(getClass().getResource("/imgs/projetil/projetil_up.gif")));
-            setDireita(ImageIO.read(getClass().getResource("/imgs/projetil/projetil_right.gif")));
-            setEsquerda(ImageIO.read(getClass().getResource("/imgs/projetil/projetil_left.gif")));
-        } catch (Exception e) {
-            e.printStackTrace();
+            this.direita_cima   =   ImageIO.read(getClass().getResource("/imgs/projetil/projetil_up-right.gif"));
+            this.direita_baixo  =   ImageIO.read(getClass().getResource("/imgs/projetil/projetil_down-right.gif"));
+            this.esquerda_cima  =   ImageIO.read(getClass().getResource("/imgs/projetil/projetil_up-left.gif"));
+            this.esquerda_baixo =   ImageIO.read(getClass().getResource("/imgs/projetil/projetil_down-left.gif"));
+            this.baixo      =   ImageIO.read(getClass().getResource("/imgs/projetil/projetil_down.gif"));
+            this.cima       =   ImageIO.read(getClass().getResource("/imgs/projetil/projetil_up.gif"));
+            this.direita    =   ImageIO.read(getClass().getResource("/imgs/projetil/projetil_right.gif"));
+            this.esquerda   =   ImageIO.read(getClass().getResource("/imgs/projetil/projetil_left.gif"));
+        } catch (IOException e) {
+            System.out.println(e);
         }
+        
         som = new Som();
-        setRaio(12);
-        setVelX(0);
-        setVelY(0);
-        setVelocidade(10);
-        setDano(1);
+        this.raio = 12;
+        this.velX = 0;
+        this.velY = 0;
+        this.velocidade = 10;
+        this.dano = 1;
     }
 
     public BufferedImage getDireita_baixo() {
@@ -193,17 +196,18 @@ public class  Projetil {
                     setImgAtual(getEsquerda());
                     //System.out.println("LEFT : X"+getPosX()+" Y"+ getPosY());
                     break;    
-                case "down": 
-                    setPosY(getPosY()+getVelocidade());
-                    setImgAtual(getBaixo());
-                    //System.out.println("DOWN : X"+getPosX()+" Y"+ getPosY());
-                    break;
                 case "down-left": 
                     setPosY(getPosY()+getVelocidade());
                     setPosX(getPosX()-getVelocidade());
                     setImgAtual(getEsquerda_baixo());
                     //System.out.println("DOWN-LEFT : X"+getPosX()+" Y"+ getPosY());
                     break;
+                case "down": 
+                    setPosY(getPosY()+getVelocidade());
+                    setImgAtual(getBaixo());
+                    //System.out.println("DOWN : X"+getPosX()+" Y"+ getPosY());
+                    break;
+                
                 case "down-right": 
                     setPosY(getPosY()+getVelocidade());
                     setPosX(getPosX()+getVelocidade());
@@ -225,11 +229,13 @@ public class  Projetil {
     public void setVelocidade(int velocidade) {
         this.velocidade = velocidade;
     }
-    public boolean getAtivo() {
+    public boolean isAtivo() {
         return ativo;
     }
     public void setAtivo(boolean ativo) {
-        getSom().Shoot();
+        if(!this.ativo){
+            getSom().Shoot();
+        }
         this.ativo = ativo;
     }
 

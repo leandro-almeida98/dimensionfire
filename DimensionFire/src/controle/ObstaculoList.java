@@ -12,13 +12,13 @@ import java.util.ArrayList;
  * @author leand
  */
 public class ObstaculoList {
-    private ArrayList<Obstaculos> obstaculo_list = new ArrayList();
+    private ArrayList<Obstrucoes> obstaculo_list = new ArrayList();
 
-    public ArrayList<Obstaculos> getObstaculo_list() {
+    public ArrayList<Obstrucoes> getObstaculo_list() {
         return obstaculo_list;
     }
 
-    public void setObstaculo_list(ArrayList<Obstaculos> obs) {
+    public void setObstaculo_list(ArrayList<Obstrucoes> obs) {
         this.obstaculo_list = obs;
     }
 

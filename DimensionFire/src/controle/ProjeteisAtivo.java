@@ -5,8 +5,6 @@
  */
 package controle;
 
-import java.util.ArrayList;
-
 /**
  *
  * @author Leandro
@@ -21,7 +19,7 @@ public class ProjeteisAtivo {
         this.cabeca = null;
     }
 
-    public boolean inserir(int index_valor, int index) {
+    /*public boolean inserir(int index_valor, int index) {
         if (index < 0 || index > tamanho) {
             System.out.println("Indice Invalido");
             return false;
@@ -42,12 +40,30 @@ public class ProjeteisAtivo {
         }
         tamanho++;
         return true;
+    }*/
+    public boolean inserir(int elemento) {
+        NodoProjeteis novo = new NodoProjeteis(elemento);
+        NodoProjeteis pont = cabeca;
+        if (tamanho == 0) {
+            novo.prox = novo;
+            cabeca = novo;
+        } else {
+            while (pont.prox != cabeca) {
+                pont = pont.prox;
+            }
+            pont.prox = novo;
+            novo.ant = pont;
+            novo.prox = cabeca;
+            cabeca.ant = novo;
+        }
+        tamanho++;
+        return true;
     }
 
     public NodoProjeteis buscar(int index_valor) {
         NodoProjeteis elem = cabeca;
         while (elem != null) {
-            if (elem.info == index_valor) {
+            if (elem.index == index_valor) {
                 return elem;
             }
             elem = elem.prox;
@@ -55,31 +71,54 @@ public class ProjeteisAtivo {
         return null;
     }
 
-    public boolean remover(int index_valor) {
+    public void printList() {
+        NodoProjeteis elem = cabeca;
+        if (elem == null) {
+            System.out.println(" -------------------LISTA VAZIA---------------------");
+            return;
+        }
+        for (int i = 0; i < tamanho;) {
+            System.out.println("Elemento valor Anterior :" + elem.ant.elem);
+            System.out.println("Valor:" + elem.elem);
+            System.out.println("Elemento valor Proximo :" + elem.prox.elem);
+            System.out.println(" ------");
+            elem = elem.prox;
+            i++;
+        }
+    }
+
+    public boolean remover(int valor) {
+        //printList();
         if (tamanho == 0) {
             System.out.println("Lista Vazia");
             return false;
         }
-        if (cabeca.info == index_valor) {
+        if (cabeca.elem == valor) {
             cabeca = cabeca.prox;
+            //System.out.println("Retirou da cabeça");
             tamanho--;
             return true;
         }
-        NodoProjeteis elem = cabeca;
-        while (elem.prox != null) {
-            if (elem.prox.info == index_valor) {
-                break;
-            }
-            elem = elem.prox;
-        }
-        if (elem.prox == null) {
-            elem.info = 0;
-            //System.out.println("Retirado :"+cabeca);
-            //cabeca = cabeca.prox;
-            //tamanho--;
+        if (tamanho == 1) {
+            System.out.println("Lista Vazia");
             return false;
         }
+        NodoProjeteis elem = cabeca;
+        int i = 0;
+        while (elem.prox != null) {
+            if (elem.prox.elem == valor) {
+                break;
+            }
+            if (i > tamanho) {
+                //System.out.println("Elemento não existe");
+                return false;
+            }
+            i++;
+            elem = elem.prox;
+        }
         elem.prox = elem.prox.prox;
+        elem.prox.ant = elem;
+        System.out.println("Retirou depois da cabeça");
         tamanho--;
         return true;
     }
@@ -91,5 +130,4 @@ public class ProjeteisAtivo {
     public void setTamanho(int tamanho) {
         this.tamanho = tamanho;
     }
-
 }

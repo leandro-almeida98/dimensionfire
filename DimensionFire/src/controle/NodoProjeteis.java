@@ -10,10 +10,15 @@ package controle;
  * @author Leandro
  */
 public class NodoProjeteis {
-    public int info;
+
+    public int index;
+    public int elem;
     public NodoProjeteis prox;
-    public NodoProjeteis (int valor){
-        this.info = valor;
+    public NodoProjeteis ant;
+
+    public NodoProjeteis(int valor) {
+        this.elem = valor;
         this.prox = null;
+        this.ant = null;
     }
 }
