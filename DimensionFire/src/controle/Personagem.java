@@ -240,7 +240,7 @@ public class Personagem extends Classe{
         this.hp = hp;
     }
     public void recebeDano(int dano){
-        if(getHp()<=0){
+        if(getHp()-dano <1){
             if(getVivo()){
                 setVivo(false);
             }

@@ -15,11 +15,14 @@ public class Obstrucoes {
 
     
     public Obstrucoes(){
+        this.ativo = true;
     }
     private int posX;
     private int posY;
     private int raio;
     private BufferedImage img;
+    private int resistencia;
+    private boolean ativo;
 
     public int getPosX() {
         return posX;
@@ -51,6 +54,22 @@ public class Obstrucoes {
 
     public void setImg(BufferedImage img) {
         this.img = img;
+    }
+
+    public int getResistencia() {
+        return resistencia;
+    }
+
+    public void setResistencia(int resistencia) {
+        this.resistencia = resistencia;
+    }
+
+    public boolean isAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(boolean ativo) {
+        this.ativo = ativo;
     }
     
     

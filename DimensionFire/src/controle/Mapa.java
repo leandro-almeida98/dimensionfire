@@ -30,6 +30,7 @@ public class Mapa  {
             obstaculo.setImg(ImageIO.read(getClass().getResource("/imgs/parada2.gif")));
             obstaculo.setPosX(338);
             obstaculo.setPosY(352);
+            obstaculo.setResistencia(20);
             lista.add(obstaculo);
         } catch (IOException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
@@ -41,6 +42,7 @@ public class Mapa  {
             obstaculo.setImg(ImageIO.read(getClass().getResource("/imgs/parada2.gif")));
             obstaculo.setPosX(150);
             obstaculo.setPosY(130);
+            obstaculo.setResistencia(30);
             lista.add(obstaculo);
         } catch (IOException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
@@ -51,6 +53,7 @@ public class Mapa  {
             obstaculo.setImg(ImageIO.read(getClass().getResource("/imgs/parada2.gif")));
             obstaculo.setPosX(50);
             obstaculo.setPosY(400);
+            obstaculo.setResistencia(40);
              lista.add(obstaculo);
         } catch (IOException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
