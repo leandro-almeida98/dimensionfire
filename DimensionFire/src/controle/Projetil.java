@@ -51,7 +51,9 @@ public class  Projetil extends Personagem {
         this.velocidade = 10;
         this.dano = 1;
     }
-
+    public int dono(){
+        return id;
+    }
     public BufferedImage getDireita_baixo() {
         return direita_baixo;
     }

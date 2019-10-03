@@ -7,7 +7,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class Personagem extends Classe{
-
+    protected int id;
     private BufferedImage parada;
     private BufferedImage direita_baixo;
     private BufferedImage direita_cima;

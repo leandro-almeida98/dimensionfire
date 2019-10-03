@@ -17,8 +17,8 @@ import javax.swing.JPanel;
 
 public class Game extends JPanel {
 
-    public Personagem personagem; // criar um objeto a classe personagem
-    public Inimigo inimigo;
+
+
     public Projetil projetil;
     public Obstrucoes obstaculo;
     public ObstaculoList obsLista;
@@ -41,18 +41,22 @@ public class Game extends JPanel {
     Classe ha = new Classe();
     
     ArrayList<Projetil> projeteis = new ArrayList<>();
+    ArrayList<Personagem> personagens = new ArrayList<>();
 
     
     
 
     public Game() {
-        personagem = new Personagem(); // inicializa o objeto personagem
-        inimigo = new Inimigo(); // inicializa o objeto inimigo
-        //projeteisAtivo = new ProjeteisAtivo();
         setFocusable(true);
         setLayout(null);
+        
+        // inicializa o objeto personagem
+        for(int i=0; i<1;i++){
+            personagens.add(new Personagem());
+        }
+        
         //POPULA OS PROJETEIS NA MEMORIA
-        for (int i = 0; i < 200; i++) {
+        for(int i = 0; i < 200; i++) {
             projeteis.add(new Projetil());
         }
         
@@ -137,27 +141,28 @@ public class Game extends JPanel {
     }
 
     public void handlerEvents() {
-        personagem.setVelX(0);
-        personagem.setVelY(0);
-        inimigo.setVelX(0);
-        inimigo.setVelY(0);
-        
+        for(int i=0;i<personagens.size();){
+            personagens.get(i).setVelX(0);
+            personagens.get(i).setVelY(0);
+            i++;
+        }        
         if (person_k_correr) {
             //ha.correr();
             //personagem.setVelocidade(11);
         } else {
-            personagem.setVelocidade(3);
+            //personagens.get(0).setVelocidade(3);
         }
-        personagem.mover(person_k_cima, person_k_direita, person_k_baixo, person_k_esquerda);
-        inimigo.mover(inimigo_k_cima, inimigo_k_direita, inimigo_k_baixo, inimigo_k_esquerda);
+        
+        personagens.get(0).mover(person_k_cima, person_k_direita, person_k_baixo, person_k_esquerda);
+        //personagens.get(1).mover(inimigo_k_cima, inimigo_k_direita, inimigo_k_baixo, inimigo_k_esquerda);
         
         // A CADA VEZ QUE PRESIONAR ESPAÇO, UM NOVO PROJETIL É CRIADO
         if (person_k_disparo) {
-            for (int i = 0; i < projeteis.size();) {
+            for(int i = 0; i < projeteis.size();) {
                 if (!projeteis.get(i).isAtivo()) {
-                    projeteis.get(i).setDirecao(personagem.getDirecao());
-                    projeteis.get(i).setPosX(personagem.getPosX() + personagem.getRaio());
-                    projeteis.get(i).setPosY(personagem.getPosY() + personagem.getRaio());
+                    projeteis.get(i).setDirecao(personagens.get(0).getDirecao());
+                    projeteis.get(i).setPosX(personagens.get(0).getPosX() + personagens.get(0).getRaio());
+                    projeteis.get(i).setPosY(personagens.get(0).getPosY() + personagens.get(0).getRaio());
                     projeteis.get(i).setAtivo(true);                
                     projeteis.get(i).setDano(50);                
                     break;
@@ -170,11 +175,11 @@ public class Game extends JPanel {
 
     public void update() {
         //MOVIMENTA O PERSONAGEM
-        personagem.setPosX(personagem.getPosX() + personagem.getVelX());
-        personagem.setPosY(personagem.getPosY() + personagem.getVelY());
-        inimigo.setPosX(inimigo.getPosX() + inimigo.getVelX());
-        inimigo.setPosY(inimigo.getPosY() + inimigo.getVelY());
-        
+        for(int i=0;i<personagens.size();){
+            personagens.get(i).setPosX(personagens.get(i).getPosX() + personagens.get(i).getVelX());
+            personagens.get(i).setPosY(personagens.get(i).getPosY() + personagens.get(i).getVelY());
+            i++;
+        }
         //VERIFICA SE O PROJETIL ESTÁ NO ESTADO ATIVO, SE ESTIVER, ELE MOVIMENTA ESSE PROJETIL
         //O PROJETIL É ATIVO ENQUANTO A SUA POSIÇÃO FOR DIFERENTE DA POSIÇÃO DO SEU DESTINO
         for(int i=0;i<projeteis.size();){
@@ -195,37 +200,35 @@ public class Game extends JPanel {
     // OUTROS MÉTODOS ------------------------------------------
     public void testeColisoes(){
         // COLISÃO NAS BORDA DA TELA TELA
-        if (personagem.getPosX() + (personagem.getRaio() * 2) >= Principal.LARGURA_TELA) { // lado direito
-            personagem.setPosX(Principal.LARGURA_TELA - (personagem.getRaio() * 2));
-        } else if (personagem.getPosX() <= 0) { // lado esquerdo
-            personagem.setPosX(0);
+        for(int i=0;i<personagens.size();){
+            if (personagens.get(i).getPosX() + (personagens.get(i).getRaio() * 2) >= Principal.LARGURA_TELA) { // lado direito
+                personagens.get(i).setPosX(Principal.LARGURA_TELA - (personagens.get(i).getRaio() * 2));
+            } else if (personagens.get(i).getPosX() <= 0) { // lado esquerdo
+                personagens.get(i).setPosX(0);
+            }
+            if (personagens.get(i).getPosY() + (personagens.get(i).getRaio() * 2) >= Principal.ALTURA_TELA) { // lado infeiror
+                personagens.get(i).setPosY(Principal.ALTURA_TELA - (personagens.get(i).getRaio() * 2));
+            } else if (personagens.get(i).getPosY() <= 0) { // lado superior
+                personagens.get(i).setPosY(0);
+            }
+            // COLISÃO CIRCULAR
+            for(int y=0;y<personagens.size();){
+                catetoH = personagens.get(i).getPosX() - personagens.get(y).getPosX();
+                catetoV = personagens.get(i).getPosY() - personagens.get(y).getPosY();
+                hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
+                if (hipotenusa <= personagens.get(i).getRaio() + personagens.get(y).getRaio()) { // verifica se houve colisão circular
+                    personagens.get(i).setPosX(personagens.get(i).getPosX() - personagens.get(i).getVelX()); // desfaz o movimento
+                    personagens.get(i).setPosY(personagens.get(i).getPosY() - personagens.get(i).getVelY()); // desfaz o movimento
+                }
+                y++;
+            }
+            
+            i++;
         }
-        if (personagem.getPosY() + (personagem.getRaio() * 2) >= Principal.ALTURA_TELA) { // lado infeiror
-            personagem.setPosY(Principal.ALTURA_TELA - (personagem.getRaio() * 2));
-        } else if (personagem.getPosY() <= 0) { // lado superior
-            personagem.setPosY(0);
-        }
-        if (inimigo.getPosX() + (inimigo.getRaio() * 2) >= Principal.LARGURA_TELA) { // lado direito
-            inimigo.setPosX(Principal.LARGURA_TELA - (inimigo.getRaio() * 2));
-        } else if (inimigo.getPosX() <= 0) { // lado esquerdo
-            inimigo.setPosX(0);
-        }
-        if (inimigo.getPosY() + (inimigo.getRaio() * 2) >= Principal.ALTURA_TELA) { // lado infeiror
-            inimigo.setPosY(Principal.ALTURA_TELA - (inimigo.getRaio() * 2));
-        } else if (inimigo.getPosY() <= 0) { // lado superior
-            inimigo.setPosY(0);
-        }
-        // COLISÃO CIRCULAR
-        catetoH = personagem.getPosX() - inimigo.getPosX();
-        catetoV = personagem.getPosY() - inimigo.getPosY();
-        hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
-        if (hipotenusa <= personagem.getRaio() + inimigo.getRaio()) { // verifica se houve colisão circular
-            personagem.setPosX(personagem.getPosX() - personagem.getVelX()); // desfaz o movimento
-            personagem.setPosY(personagem.getPosY() - personagem.getVelY()); // desfaz o movimento
-        }
+        
         //COLISÃO DO PROJETIL COM OS OBSTACULOS
-        /*for (int i = 0; i < projeteisAtivo.getTamanho();) {
-            for (int y = 0; y < obsLista.getObstaculo_list().size();) {
+        /*for (i = 0; i < projeteisAtivo.getTamanho();) {
+            for (y = 0; y < obsLista.getObstaculo_list().size();) {
                 catetoH = projeteis.get(i).getPosX() - obsLista.getObstaculo_list().get(y).getPosX();
                 catetoV = projeteis.get(i).getPosY() - obsLista.getObstaculo_list().get(y).getPosY();
                 hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
@@ -237,21 +240,24 @@ public class Game extends JPanel {
             i++;
         }*/
         // COLISÃO DO PERSONAGEM COM OS OBSTACULO DO MAPA
-        for (int i = 0; i < obsLista.getObstaculo_list().size();) {
-            catetoH = personagem.getPosX() - obsLista.getObstaculo_list().get(i).getPosX();
-            catetoV = personagem.getPosY() - obsLista.getObstaculo_list().get(i).getPosY();
-            hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
-            if (hipotenusa <= obsLista.getObstaculo_list().get(i).getRaio() + personagem.getRaio()) { // verifica se houve colisão circular
-                 if(obsLista.getObstaculo_list().get(i).isAtivo()){
-                    personagem.setPosX(personagem.getPosX() - personagem.getVelX()); // desfaz o movimento
-                    personagem.setPosY(personagem.getPosY() - personagem.getVelY()); // desfaz o movimento
+        for(int i=0;i<personagens.size();){
+            for(int y = 0; y < obsLista.getObstaculo_list().size();) {
+                catetoH = personagens.get(i).getPosX() - obsLista.getObstaculo_list().get(y).getPosX();
+                catetoV = personagens.get(i).getPosY() - obsLista.getObstaculo_list().get(y).getPosY();
+                hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
+                if (hipotenusa <= obsLista.getObstaculo_list().get(y).getRaio() + personagens.get(i).getRaio()) { // verifica se houve colisão circular
+                     if(obsLista.getObstaculo_list().get(y).isAtivo()){
+                        personagens.get(i).setPosX(personagens.get(i).getPosX() - personagens.get(i).getVelX()); // desfaz o movimento
+                        personagens.get(i).setPosY(personagens.get(i).getPosY() - personagens.get(i).getVelY()); // desfaz o movimento
+                    }
                 }
+                y++;
             }
             i++;
         }
     }
     public void colisaoProjeteisObstaculos(int i){
-        for (int y = 0; y < obsLista.getObstaculo_list().size();) {
+        for(int y = 0; y < obsLista.getObstaculo_list().size();) {
             catetoH = projeteis.get(i).getPosX() - obsLista.getObstaculo_list().get(y).getPosX();
             catetoV = projeteis.get(i).getPosY() - obsLista.getObstaculo_list().get(y).getPosY();
             hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
@@ -266,19 +272,22 @@ public class Game extends JPanel {
         }
     }
     public void colisaoProjeteis(int i){
-        catetoH = projeteis.get(i).getPosX() - inimigo.getPosX();
-        catetoV = projeteis.get(i).getPosY() - inimigo.getPosY();
-        hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
-        if (hipotenusa <= projeteis.get(i).getRaio() + inimigo.getRaio()) { // verifica se houve colisão circula
-            if (inimigo.getVivo()) {
-                inimigo.recebeDano(projeteis.get(i).getDano()); // RETIRA HP DO INIMIGO
-                System.out.println("Hp: " + inimigo.getHp());
-                progresso.setValue(inimigo.getHp());
-                projeteis.get(i).setAtivo(false);
-                if (!inimigo.getVivo()) {
-                    System.out.println("Dead");
+        for(int y = 0;y<personagens.size();){
+            catetoH = projeteis.get(i).getPosX() - personagens.get(y).getPosX();
+            catetoV = projeteis.get(i).getPosY() - personagens.get(y).getPosY();
+            hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
+            if (hipotenusa <= projeteis.get(i).getRaio() + personagens.get(y).getRaio()) { // verifica se houve colisão circula
+                if (personagens.get(y).getVivo()) {
+                    personagens.get(y).recebeDano(projeteis.get(i).getDano()); // RETIRA HP DO INIMIGO
+                    System.out.println("Hp: " + personagens.get(y).getHp());
+                    progresso.setValue(personagens.get(y).getHp());
+                    projeteis.get(i).setAtivo(false);
+                    if (!personagens.get(y).getVivo()) {
+                        System.out.println("Dead");
+                    }
                 }
             }
+            y++;
         }
     }
     @Override
@@ -286,20 +295,20 @@ public class Game extends JPanel {
         super.paintComponent(g);
         setBackground(Color.WHITE);
         //g.setColor(Color.RED);
-        if (personagem.getVivo()) {
-            g.drawImage(personagem.getImgAtual(), personagem.getPosX(), personagem.getPosY(), null);
+        for(int i=0;i<personagens.size();){
+            if (personagens.get(i).getVivo()) {
+                g.drawImage(personagens.get(i).getImgAtual(), personagens.get(i).getPosX(), personagens.get(i).getPosY(), null);
+            }
+            i++;
         }
-        if (inimigo.getVivo()) {
-            g.drawImage(inimigo.getImgAtual(), inimigo.getPosX(), inimigo.getPosY(), null);
-        }
-        for (int i = 0; i < projeteis.size();) {
+        for(int i = 0; i < projeteis.size();) {
             if (projeteis.get(i).isAtivo()) {
                 g.drawImage(projeteis.get(i).getImgAtual(), projeteis.get(i).getPosX(), projeteis.get(i).getPosY(), null);
             }
             i++;
         }
         //MOSTRA OS OBSTACULOS
-        for (int i = 0; i < obsLista.getObstaculo_list().size();) {
+        for(int i = 0; i < obsLista.getObstaculo_list().size();) {
             if(obsLista.getObstaculo_list().get(i).isAtivo()){
                 g.drawImage(obsLista.getObstaculo_list().get(i).getImg(), obsLista.getObstaculo_list().get(i).getPosX(), obsLista.getObstaculo_list().get(i).getPosY(), null);
             }
