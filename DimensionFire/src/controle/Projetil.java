@@ -49,7 +49,7 @@ public class  Projetil extends Personagem {
         this.velX = 0;
         this.velY = 0;
         this.velocidade = 10;
-        this.dano = 1;
+        this.dano = 15;
     }
     public int dono(){
         return id;
