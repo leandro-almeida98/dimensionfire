@@ -5,26 +5,18 @@ import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Random;
-import java.util.Set;
-import java.util.Stack;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
 public class Game extends JPanel {
 
     public Projetil projetil;
-    public Obstrucoes obstaculo;
-    public ObstaculoList obsLista;
     public Personagem personagem;
+    public Mapa mapa ;
     public Som som;
+    public Classe classe;
 
     private boolean person_k_cima = false;
     private boolean person_k_baixo = false;
@@ -36,41 +28,40 @@ public class Game extends JPanel {
     private boolean inimigo_k_esquerda = false;
     private boolean person_k_disparo = false;
     private boolean inimigo_k_disparo = false;
-    private boolean person_k_correr = false;
+    private boolean habilidade_1 = false;
     private boolean clicado = false;
     int catetoH;
     int catetoV;
     double hipotenusa;
-    Classe ha = new Classe();
 
-    ArrayList<Projetil> projeteis = new ArrayList<>();
-    ArrayList<Personagem> personagens = new ArrayList<>();
+    private ArrayList<Projetil> projeteis;
+    private ArrayList<Personagem> personagens;
+    private ArrayList<Obstrucoes> obstaculos;
 
     private final int NumPerson = 2;
-    private final int NumProjeteis = 200;
+    private final int NumProjeteis = 100;
 
     public Game() {
-        Random entrada = new Random();
+        mapa = new Mapa();
+        classe = new Classe();
+        projeteis = new ArrayList<>();
+        personagens = new ArrayList<>();
+        
+        obstaculos = mapa.mapa_1(); // POPULA OBSTACULOS
+        personagens.add(classe.Matias()); //POPULA PERSONAGENS
+        personagens.add(classe.Julios()); //POPULA PERSONAGENS
+        
+       
         setFocusable(true);
         setLayout(null);
 
-        // inicializa o objeto personagem
-        for (int i = 0; i < NumPerson; ) {
-            personagem = new Personagem();
-            personagem.setIdPerson(entrada.nextLong());
-            personagem.setPosX(i==0?500:700);
-            personagens.add(personagem);
-            i++;
-        }
+        
+        
         //POPULA OS PROJETEIS NA MEMORIA
         for (int i = 0; i < NumProjeteis; ) {
             projeteis.add( new Projetil());
             i++;
         }
-        obsLista = new ObstaculoList();
-        Mapa mapa = new Mapa();
-        obsLista.setObstaculo_list(mapa.map());
-
 
         addKeyListener(new KeyListener() {
             @Override
@@ -96,6 +87,9 @@ public class Game extends JPanel {
                         person_k_disparo = true;
                         //System.out.println("Disparo");
                         break;
+                    case KeyEvent.VK_SHIFT:
+                        habilidade_1 = true;
+                        break;
                     //INIMIGO
                     case KeyEvent.VK_UP:
                         inimigo_k_cima = true;
@@ -112,7 +106,6 @@ public class Game extends JPanel {
                     case KeyEvent.VK_NUMPAD0:
                         inimigo_k_disparo = true;
                         break;
-                    
                 }
             }
             @Override
@@ -131,7 +124,7 @@ public class Game extends JPanel {
                         person_k_direita = false;
                         break;
                     case KeyEvent.VK_SHIFT:
-                        person_k_correr = false;
+                        habilidade_1 = false;
                         break;
                     //INIMIGO
                     case KeyEvent.VK_UP:
@@ -150,37 +143,6 @@ public class Game extends JPanel {
                         inimigo_k_disparo = false;
                         break;
                 }
-                /*if(e.getKeyCode() == KeyEvent.VK_W){
-                     person_k_cima = false;
-                }
-                if(e.getKeyCode() == KeyEvent.VK_S){
-                    person_k_baixo = false;
-                }
-                if(e.getKeyCode() == KeyEvent.VK_A){
-                     person_k_esquerda = false;
-                }
-                if(e.getKeyCode() == KeyEvent.VK_D){
-                     person_k_direita = false;
-                }
-                if(e.getKeyCode() == KeyEvent.VK_SPACE){
-                     person_k_disparo = false;
-                }
-                if(e.getKeyCode() == KeyEvent.VK_UP){
-                     inimigo_k_cima = false;
-                }
-                if(e.getKeyCode() == KeyEvent.VK_DOWN){
-                     inimigo_k_baixo = false;
-                }
-                if(e.getKeyCode() == KeyEvent.VK_LEFT){
-                     inimigo_k_esquerda = false;
-                }
-                if(e.getKeyCode() == KeyEvent.VK_RIGHT){
-                     inimigo_k_direita = false;
-                }
-                 if(e.getKeyCode() == KeyEvent.VK_NUMPAD0){
-                     inimigo_k_disparo = false;
-                }
-                */
             }
 
             @Override
@@ -217,9 +179,8 @@ public class Game extends JPanel {
             personagens.get(i).setVelY(0);
             i++;
         }
-        if (person_k_correr) {
-            //ha.correr();
-            //personagem.setVelocidade(11);
+        if (habilidade_1) {
+            personagens.get(0).habilidade_1();
         } else {
             //personagens.get(0).setVelocidade(3);
         }
@@ -230,12 +191,8 @@ public class Game extends JPanel {
         if (person_k_disparo) {
             for(int i = 0; i < projeteis.size();) {
                 if (!projeteis.get(i).isAtivo()) {
-                    projeteis.get(i).setDirecao(personagens.get(0).getDirecao());
-                    projeteis.get(i).setPosX(personagens.get(0).getPosX() + personagens.get(0).getRaio());
-                    projeteis.get(i).setPosY(personagens.get(0).getPosY() + personagens.get(0).getRaio());
-                    projeteis.get(i).setIdPerson(personagens.get(0).getIdPerson());
+                    projeteis.get(i).setPersonagem(personagens.get(0));
                     projeteis.get(i).setAtivo(true);
-                    projeteis.get(i).setDano(15);
                     break;
                 }
                 i++;
@@ -245,12 +202,8 @@ public class Game extends JPanel {
         if (inimigo_k_disparo) {
             for (int i = 0; i < projeteis.size();) {
                 if (!projeteis.get(i).isAtivo()) {
-                    projeteis.get(i).setDirecao(personagens.get(1).getDirecao());
-                    projeteis.get(i).setPosX(personagens.get(1).getPosX() + personagens.get(1).getRaio());
-                    projeteis.get(i).setPosY(personagens.get(1).getPosY() + personagens.get(1).getRaio());
+                    projeteis.get(i).setPersonagem(personagens.get(1));
                     projeteis.get(i).setAtivo(true);
-                    projeteis.get(i).setIdPerson(personagens.get(1).getIdPerson());
-                    projeteis.get(i).setDano(15);
                     break;
                 }
                 i++;
@@ -271,7 +224,7 @@ public class Game extends JPanel {
         for (int i = 0; i < projeteis.size();) {
             if (projeteis.get(i).isAtivo()) {
                 projeteis.get(i).mover();
-                colisaoProjeteis(i);
+                colisaoProjeteisPersonagens(i);
                 colisaoProjeteisObstaculos(i);
             }
             i++;
@@ -283,6 +236,36 @@ public class Game extends JPanel {
         repaint();
     }
 
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        setBackground(Color.WHITE);
+        //g.setColor(Color.RED);
+        
+        //MOSTRA OS PERSONAGENS
+        for (int i = 0; i < personagens.size();) {
+            if (personagens.get(i).getVivo()) {
+                g.drawImage(personagens.get(i).getImgAtual(), personagens.get(i).getPosX(), personagens.get(i).getPosY(), null);
+            }
+            i++;
+        }
+        //MOSTRA OS PROJETEIS
+        for (int i = 0; i < projeteis.size();) {
+            if (projeteis.get(i).isAtivo()) {
+                g.drawImage(projeteis.get(i).getImgAtual(), projeteis.get(i).getPosX(), projeteis.get(i).getPosY(), null);
+            }
+            i++;
+        }
+        //MOSTRA OS OBSTACULOS
+        for (int i = 0; i < obstaculos.size();) {
+            if (obstaculos.get(i).isAtivo()) {
+                g.drawImage(obstaculos.get(i).getImg(), obstaculos.get(i).getPosX(), obstaculos.get(i).getPosY(), null);
+            }
+            i++;
+        }
+    }
+    
+    
     // OUTROS MÉTODOS ------------------------------------------
     public void testeColisoes() {
         // COLISÃO NAS BORDA DA TELA TELA
@@ -297,6 +280,7 @@ public class Game extends JPanel {
             } else if (personagens.get(i).getPosY() <= 0) { // lado superior
                 personagens.get(i).setPosY(0);
             }
+            
             // COLISÃO CIRCULAR
             for (int y = 0; y < personagens.size();) {
                 if (personagens.get(i).getIdPerson() != personagens.get(y).getIdPerson() && personagens.get(y).getVivo()) {
@@ -310,48 +294,47 @@ public class Game extends JPanel {
                 }
                 y++;
             }
-
             i++;
         }
 
         // COLISÃO DO PERSONAGEM COM OS OBSTACULO DO MAPA
         for (int i = 0; i < personagens.size();) {
-            for (int y = 0; y < obsLista.getObstaculo_list().size();) {
-                if (obsLista.getObstaculo_list().get(y).isAtivo()) {
-                    catetoH = personagens.get(i).getPosX() - obsLista.getObstaculo_list().get(y).getPosX();
-                    catetoV = personagens.get(i).getPosY() - obsLista.getObstaculo_list().get(y).getPosY();
+            for (int y = 0; y < obstaculos.size();) {
+                if (obstaculos.get(y).isAtivo()) {
+                    catetoH = personagens.get(i).getPosX() - obstaculos.get(y).getPosX();
+                    catetoV = personagens.get(i).getPosY() - obstaculos.get(y).getPosY();
                     hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
-                    if (hipotenusa <= obsLista.getObstaculo_list().get(y).getRaio() + personagens.get(i).getRaio()) { // verifica se houve colisão circular
+                    if (hipotenusa <= obstaculos.get(y).getRaio() + personagens.get(i).getRaio()) { // verifica se houve colisão circular
                             personagens.get(i).setPosX(personagens.get(i).getPosX() - personagens.get(i).getVelX()); // desfaz o movimento
                             personagens.get(i).setPosY(personagens.get(i).getPosY() - personagens.get(i).getVelY()); // desfaz o movimento
-
                     }
                 }
                 y++;
             }
             i++;
         }
-    }
-
+    } // FIM TESTE COLISÕES
+    
     public void colisaoProjeteisObstaculos(int i) {
-        for (int y = 0; y < obsLista.getObstaculo_list().size();) {
-            catetoH = projeteis.get(i).getPosX() - obsLista.getObstaculo_list().get(y).getPosX();
-            catetoV = projeteis.get(i).getPosY() - obsLista.getObstaculo_list().get(y).getPosY();
+        for (int y = 0; y < obstaculos.size();) {
+            catetoH = projeteis.get(i).getPosX() - obstaculos.get(y).getPosX();
+            catetoV = projeteis.get(i).getPosY() - obstaculos.get(y).getPosY();
             hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
-            if (hipotenusa <= projeteis.get(i).getRaio() + obsLista.getObstaculo_list().get(y).getRaio()) { // verifica se houve colisão circular
-                if (projeteis.get(i).getDano() < obsLista.getObstaculo_list().get(y).getResistencia()) {
+            if (hipotenusa <= projeteis.get(i).getRaio() + obstaculos.get(y).getRaio()) { // verifica se houve colisão circular
+                if (projeteis.get(i).getDano() < obstaculos.get(y).getResistencia()) {
                     projeteis.get(i).setAtivo(false);
                 } else {
-                    obsLista.getObstaculo_list().get(y).setAtivo(false);
+                    obstaculos.get(y).setAtivo(false);
+                    //projeteis.get(i).setDano(projeteis.get(i).getDano() - obstaculos.get(y).getResistencia() );
                 }
             }
             y++;
         }
     }
-
-    public void colisaoProjeteis(int i) {
+    
+    public void colisaoProjeteisPersonagens(int i) {
         for (int y = 0; y < personagens.size();) {
-            if (personagens.get(y).getVivo() && personagens.get(y).getIdPerson() != projeteis.get(i).getIdPerson()) {
+            if (personagens.get(y).getVivo() && personagens.get(y).getIdPerson() != projeteis.get(i).getIdPersonagem()) {// VERIFICA SE DONO DO PROJETIL É DIFERENTE DO ALVO QUE ESTÁ COLIDINDO
                 catetoH = projeteis.get(i).getPosX() - personagens.get(y).getPosX();
                 catetoV = projeteis.get(i).getPosY() - personagens.get(y).getPosY();
                 hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
@@ -366,35 +349,6 @@ public class Game extends JPanel {
                 }
             }
             y++;
-        }
-    }
-
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        setBackground(Color.WHITE);
-        //g.setColor(Color.RED);
-
-        //PERSONAGENS
-        for (int i = 0; i < personagens.size();) {
-            if (personagens.get(i).getVivo()) {
-                g.drawImage(personagens.get(i).getImgAtual(), personagens.get(i).getPosX(), personagens.get(i).getPosY(), null);
-            }
-            i++;
-        }
-        //PROJETEIS
-        for (int i = 0; i < projeteis.size();) {
-            if (projeteis.get(i).isAtivo()) {
-                g.drawImage(projeteis.get(i).getImgAtual(), projeteis.get(i).getPosX(), projeteis.get(i).getPosY(), null);
-            }
-            i++;
-        }
-        //MOSTRA OS OBSTACULOS
-        for (int i = 0; i < obsLista.getObstaculo_list().size();) {
-            if (obsLista.getObstaculo_list().get(i).isAtivo()) {
-                g.drawImage(obsLista.getObstaculo_list().get(i).getImg(), obsLista.getObstaculo_list().get(i).getPosX(), obsLista.getObstaculo_list().get(i).getPosY(), null);
-            }
-            i++;
         }
     }
 }

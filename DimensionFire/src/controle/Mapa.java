@@ -19,18 +19,15 @@ import javax.imageio.ImageIO;
 public class Mapa  {
     private Obstrucoes obstaculo;
     
-    ArrayList<Obstrucoes> lista = new ArrayList<Obstrucoes>();
-
-
-    
-    public ArrayList<Obstrucoes> map(){
+    public ArrayList<Obstrucoes> mapa_1(){
+        ArrayList<Obstrucoes> lista = new ArrayList<Obstrucoes>();
         try {
             obstaculo = new Obstrucoes();
             obstaculo.setRaio(50);
             obstaculo.setImg(ImageIO.read(getClass().getResource("/imgs/parada2.gif")));
             obstaculo.setPosX(338);
             obstaculo.setPosY(352);
-            obstaculo.setResistencia(20);
+            obstaculo.setResistencia(12);
             lista.add(obstaculo);
         } catch (IOException ex) {
             Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);

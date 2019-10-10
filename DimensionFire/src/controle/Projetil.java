@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
-public class  Projetil extends Personagem {
+public class  Projetil  {
     
     private BufferedImage direita_baixo;
     private BufferedImage direita_cima;
@@ -23,11 +23,10 @@ public class  Projetil extends Personagem {
     private int velY;
     private BufferedImage imgAtual;
     private int velocidade;
-    private String direcao;
     private boolean ativo = false;
-    private int dano;
     int i=0;
     private Som som; 
+    private Personagem personagem;
     
     public Projetil() {
 
@@ -49,11 +48,72 @@ public class  Projetil extends Personagem {
         this.velX = 0;
         this.velY = 0;
         this.velocidade = 10;
-        this.dano = 15;
     }
-    public int dono(){
-        return id;
+
+    
+    // MOVE O PROJETIL
+    public void mover() {
+            switch(personagem.getDirecao()){
+                case "up": 
+                    setPosY(getPosY()-getVelocidade());
+                    setImgAtual(getCima());
+                    break;
+                case "up-right": 
+                    setPosY(getPosY()-getVelocidade());
+                    setPosX(getPosX()+getVelocidade());
+                    setImgAtual(getDireita_cima());
+                    break;
+                case "up-left": 
+                    setPosY(getPosY()-getVelocidade());
+                    setPosX(getPosX()-getVelocidade());
+                    setImgAtual(getEsquerda_cima());
+                    break;
+                case "right": 
+                    setPosX(getPosX()+getVelocidade());
+                    setImgAtual(getDireita());
+                    break;
+                case "left": 
+                    setPosX(getPosX()-getVelocidade());
+                    setImgAtual(getEsquerda());
+                    break;    
+                case "down-left": 
+                    setPosY(getPosY()+getVelocidade());
+                    setPosX(getPosX()-getVelocidade());
+                    setImgAtual(getEsquerda_baixo());
+                    break;
+                case "down": 
+                    setPosY(getPosY()+getVelocidade());
+                    setImgAtual(getBaixo());
+                    break;
+                
+                case "down-right": 
+                    setPosY(getPosY()+getVelocidade());
+                    setPosX(getPosX()+getVelocidade());
+                    setImgAtual(getDireita_baixo());
+                    break;    
+            }
+            if(getPosX() >= Principal.LARGURA_TELA || getPosY() >= Principal.ALTURA_TELA || getPosX() <=0 || getPosY() <= 0 ){
+                this.ativo = false;
+                this.i = 0;
+            }
     }
+    
+    
+    // METODO QUE INICIA E DA CARACTERISTICAS AO PROJETIL
+    public void setAtivo(boolean ativo) {
+        if(ativo){
+            getSom().Shoot();
+            setPosX(personagem.getPosX()+personagem.getRaio());
+            setPosY(personagem.getPosY()+personagem.getRaio());
+            this.ativo = true;
+        }else{
+            this.ativo = false;
+        }
+    }
+    
+    //
+    //GETTER & SETTERS
+    //
     public BufferedImage getDireita_baixo() {
         return direita_baixo;
     }
@@ -165,66 +225,6 @@ public class  Projetil extends Personagem {
     public void setImgAtual(BufferedImage imgAtual) {
         this.imgAtual = imgAtual;
     }
-    
-    
-    // MOVE O PROJETIL
-    public void mover() {
-
-            switch(getDirecao()){
-                case "up": 
-                    setPosY(getPosY()-getVelocidade());
-                    setImgAtual(getCima());
-                    //System.out.println("UP : "+ getPosY());
-                    break;
-                case "up-right": 
-                    setPosY(getPosY()-getVelocidade());
-                    setPosX(getPosX()+getVelocidade());
-                    setImgAtual(getDireita_cima());
-                    //System.out.println("UP-RIGHT : X"+getPosX()+" Y"+ getPosY());
-                    break;
-                case "up-left": 
-                    setPosY(getPosY()-getVelocidade());
-                    setPosX(getPosX()-getVelocidade());
-                    setImgAtual(getEsquerda_cima());
-                    //System.out.println("UP-LEFT : X"+getPosX()+" Y"+ getPosY());
-                    break;
-                case "right": 
-                    setPosX(getPosX()+getVelocidade());
-                    setImgAtual(getDireita());
-                    //System.out.println("RIGHT : X"+getPosX()+" Y"+ getPosY());
-                    break;
-                case "left": 
-                    setPosX(getPosX()-getVelocidade());
-                    setImgAtual(getEsquerda());
-                    //System.out.println("LEFT : X"+getPosX()+" Y"+ getPosY());
-                    break;    
-                case "down-left": 
-                    setPosY(getPosY()+getVelocidade());
-                    setPosX(getPosX()-getVelocidade());
-                    setImgAtual(getEsquerda_baixo());
-                    //System.out.println("DOWN-LEFT : X"+getPosX()+" Y"+ getPosY());
-                    break;
-                case "down": 
-                    setPosY(getPosY()+getVelocidade());
-                    setImgAtual(getBaixo());
-                    //System.out.println("DOWN : X"+getPosX()+" Y"+ getPosY());
-                    break;
-                
-                case "down-right": 
-                    setPosY(getPosY()+getVelocidade());
-                    setPosX(getPosX()+getVelocidade());
-                    setImgAtual(getDireita_baixo());
-                    //System.out.println("DOWN-RIGHT : X"+getPosX()+" Y"+ getPosY());
-                    break;    
-            }
-            if(getPosX() >= Principal.LARGURA_TELA || getPosY() >= Principal.ALTURA_TELA || getPosX() <=0 || getPosY() <= 0 ){
-                this.ativo = false;
-                this.i = 0;
-                setDirecao("invisivel");
-            }
-    }
-    
-    
     public int getVelocidade() {
         return velocidade;
     }
@@ -234,27 +234,9 @@ public class  Projetil extends Personagem {
     public boolean isAtivo() {
         return ativo;
     }
-    public void setAtivo(boolean ativo) {
-        if(!this.ativo){
-            getSom().Shoot();
-        }
-        this.ativo = ativo;
-    }
-
-    public String getDirecao() {
-        return direcao;
-    }
-
-    public void setDirecao(String direcao) {
-        this.direcao = direcao;
-    }
-
+    
     public int getDano() {
-        return dano;
-    }
-
-    public void setDano(int dano) {
-        this.dano = dano;
+        return personagem.getAtributo().getDano();
     }
 
     public Som getSom() {
@@ -264,4 +246,18 @@ public class  Projetil extends Personagem {
     public void setSom(Som som) {
         this.som = som;
     }
+
+    public long getIdPersonagem() {
+        return personagem.getIdPerson();
+    }
+
+    public Personagem getPersonagem() {
+        return personagem;
+    }
+
+    public void setPersonagem(Personagem personagem) {
+        this.personagem = personagem;
+    }
+
+
 }

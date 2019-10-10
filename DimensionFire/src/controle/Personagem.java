@@ -1,7 +1,5 @@
 package controle;
 
-
-import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -17,16 +15,18 @@ public class Personagem extends Classe{
     private BufferedImage esquerda;
     private BufferedImage cima;
     private BufferedImage baixo;
+    private BufferedImage imgAtual;
+    
     private int posX;
     private int posY;
     private int raio;
     private int velX;
     private int velY;
-    private BufferedImage imgAtual;
-    private int velocidade;
+    
     private String direcao;
-    private int hp;
     private boolean vivo;
+    private Atributo atributo;
+    
     
     private long idPerson;
     
@@ -45,16 +45,12 @@ public class Personagem extends Classe{
         } catch (IOException e) {
             System.out.println(e);
         }
-        
-        this.idPerson = 1894985646; 
         this.posX = 100;
         this.posY = 300;
         this.raio = 50;
         this.velX = 0;
         this.velY = 0;
-        this.velocidade = 3;
         this.vivo = true;
-        this.hp = 100;
     }
 
     public BufferedImage getParada() {
@@ -177,11 +173,7 @@ public class Personagem extends Classe{
         this.imgAtual = imgAtual;
     }
     public int getVelocidade() {
-        return velocidade;
-    }
-
-    public void setVelocidade(int velocidade) {
-        this.velocidade = velocidade;
+        return atributo.getVelocidade();
     }
     
     public void mover(boolean kup,  boolean kright, boolean kdown, boolean kleft) {
@@ -233,11 +225,11 @@ public class Personagem extends Classe{
     }
 
     public int getHp() {
-        return hp;
+        return atributo.getHp();
     }
 
     public void setHp(int hp) {
-        this.hp = hp;
+        atributo.setHp(hp);
     }
     public void recebeDano(int dano){
         if(getHp()-dano <1){
@@ -265,7 +257,52 @@ public class Personagem extends Classe{
         this.idPerson = idPerson;
     }
 
+    public Atributo getAtributo() {
+        return atributo;
+    }
 
-
-   
+    public void setAtributo(Atributo atributos) {
+        this.atributo = atributos;
+    }
+    int distancia;
+    public void habilidade_1(){
+        if(atributo.getHabilidade().isCorrer()){ 
+            atributo.setVelocidade(getVelocidade() +5);
+        }
+        if(atributo.getHabilidade().isTeleporte()){
+            distancia = 20;
+            System.out.println("TP");
+            switch(getDirecao()){
+                case "up": 
+                    setPosY(getPosY()-distancia); 
+                    break;
+                case "down": 
+                    setPosY(getPosY()+distancia);
+                    break;
+                case "right": 
+                    setPosX(getPosX()+distancia);
+                    break;
+                case "left": 
+                    setPosX(getPosX()+distancia);
+                    break;
+                case "up-left": 
+                    setPosY(getPosY()-distancia);
+                    setPosX(getPosX()-distancia);
+                    break;
+                case "up-right": 
+                    setPosY(getPosY()-distancia);
+                    setPosX(getPosX()+distancia);
+                    break;
+                case "down-left": 
+                    setPosY(getPosY()+distancia);
+                    setPosX(getPosX()-distancia);
+                    break;
+                case "down-right": 
+                    setPosY(getPosY()+distancia);
+                    setPosX(getPosX()+distancia);
+                    break;
+            }
+            ;
+        }
+    }
 }
