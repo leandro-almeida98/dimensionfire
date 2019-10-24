@@ -1,15 +1,8 @@
 package controle;
 
-import interfaces.Inicio_tela;
+
 import java.awt.Dimension;
 import javax.swing.JFrame;
-import javax.swing.JProgressBar;
-import model.Conexao;
-
-import java.awt.Cursor;
-
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.JProgressBar;
 
 public class Principal {

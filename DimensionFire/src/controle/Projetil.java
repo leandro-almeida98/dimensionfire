@@ -1,6 +1,7 @@
 package controle;
 
 
+import controle.Habilidades.Teleporte;
 import static controle.Principal.ALTURA_TELA;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -27,6 +28,7 @@ public class  Projetil  {
     int i=0;
     private Som som; 
     private Personagem personagem;
+    private String direcao;
     
     public Projetil() {
 
@@ -53,7 +55,8 @@ public class  Projetil  {
     
     // MOVE O PROJETIL
     public void mover() {
-            switch(personagem.getDirecao()){
+        System.out.println("Posiçção projetil: "+personagem.getDirecao());
+            switch(direcao){                
                 case "up": 
                     setPosY(getPosY()-getVelocidade());
                     setImgAtual(getCima());
@@ -257,6 +260,10 @@ public class  Projetil  {
 
     public void setPersonagem(Personagem personagem) {
         this.personagem = personagem;
+    }
+
+    public void setDirecao(String direcao) {
+        this.direcao = direcao;
     }
 
 

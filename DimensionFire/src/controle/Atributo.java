@@ -11,14 +11,10 @@ package controle;
  */
 public class Atributo {
     private int velocidade;
+    private int velocidade_padrao;
     private int dano;
     private int hp;
     private Habilidade habilidade;
-    
-    
-    public void correr(){
-        this.velocidade = velocidade + 5;
-    }
 
     public int getVelocidade() {
         return velocidade;
@@ -50,6 +46,14 @@ public class Atributo {
 
     public void setHabilidade(Habilidade habilidade) {
         this.habilidade = habilidade;
+    }
+
+    public int getVelocidade_padrao() {
+        return velocidade_padrao;
+    }
+
+    public void setVelocidade_padrao(int velocidade_padrao) {
+        this.velocidade_padrao = velocidade_padrao;
     }
     
 }

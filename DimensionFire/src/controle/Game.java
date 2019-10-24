@@ -5,10 +5,12 @@ import java.awt.Graphics;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
+import model.Comunicar;
 
 public class Game extends JPanel {
 
@@ -17,17 +19,13 @@ public class Game extends JPanel {
     public Mapa mapa ;
     public Som som;
     public Classe classe;
+    private Comunicar comunicar;
 
     private boolean person_k_cima = false;
     private boolean person_k_baixo = false;
     private boolean person_k_direita = false;
     private boolean person_k_esquerda = false;
-    private boolean inimigo_k_cima = false;
-    private boolean inimigo_k_baixo = false;
-    private boolean inimigo_k_direita = false;
-    private boolean inimigo_k_esquerda = false;
     private boolean person_k_disparo = false;
-    private boolean inimigo_k_disparo = false;
     private boolean habilidade_1 = false;
     private boolean clicado = false;
     int catetoH;
@@ -44,6 +42,7 @@ public class Game extends JPanel {
     public Game() {
         mapa = new Mapa();
         classe = new Classe();
+        comunicar = new Comunicar(12354);
         projeteis = new ArrayList<>();
         personagens = new ArrayList<>();
         
@@ -51,18 +50,20 @@ public class Game extends JPanel {
         personagens.add(classe.Matias()); //POPULA PERSONAGENS
         personagens.add(classe.Julios()); //POPULA PERSONAGENS
         
-       
-        setFocusable(true);
-        setLayout(null);
+        
 
-        
-        
+        setFocusable(true);
+        setLayout(null);        
         //POPULA OS PROJETEIS NA MEMORIA
         for (int i = 0; i < NumProjeteis; ) {
             projeteis.add( new Projetil());
             i++;
         }
-
+        //COMANDO PARA PEGAR O IP UTILIZADO PELO CLIENTE. ( PARA CRIARO SERVIDOR )
+         try {
+            System.out.println(InetAddress.getLocalHost().getHostAddress());
+        } catch (Exception e) {
+        }
         addKeyListener(new KeyListener() {
             @Override
             public void keyPressed(KeyEvent e) {
@@ -90,22 +91,6 @@ public class Game extends JPanel {
                     case KeyEvent.VK_SHIFT:
                         habilidade_1 = true;
                         break;
-                    //INIMIGO
-                    case KeyEvent.VK_UP:
-                        inimigo_k_cima = true;
-                        break;
-                    case KeyEvent.VK_DOWN:
-                        inimigo_k_baixo = true;
-                        break;
-                    case KeyEvent.VK_LEFT:
-                        inimigo_k_esquerda = true;
-                        break;
-                    case KeyEvent.VK_RIGHT:
-                        inimigo_k_direita = true;
-                        break; 
-                    case KeyEvent.VK_NUMPAD0:
-                        inimigo_k_disparo = true;
-                        break;
                 }
             }
             @Override
@@ -125,22 +110,6 @@ public class Game extends JPanel {
                         break;
                     case KeyEvent.VK_SHIFT:
                         habilidade_1 = false;
-                        break;
-                    //INIMIGO
-                    case KeyEvent.VK_UP:
-                        inimigo_k_cima = false;
-                        break;
-                    case KeyEvent.VK_DOWN:
-                        inimigo_k_baixo = false;
-                        break;
-                    case KeyEvent.VK_LEFT:
-                        inimigo_k_esquerda = false;
-                        break;
-                    case KeyEvent.VK_RIGHT:
-                        inimigo_k_direita = false;
-                        break; 
-                    case KeyEvent.VK_NUMPAD0:
-                        inimigo_k_disparo = false;
                         break;
                 }
             }
@@ -180,18 +149,21 @@ public class Game extends JPanel {
             i++;
         }
         if (habilidade_1) {
-            personagens.get(0).habilidade_1();
+            personagens.get(0).habilidade_1(true);
         } else {
-            //personagens.get(0).setVelocidade(3);
+            personagens.get(0).habilidade_1(false);
         }
+        
+        
         personagens.get(0).mover(person_k_cima, person_k_direita, person_k_baixo, person_k_esquerda);
-        personagens.get(1).mover(inimigo_k_cima, inimigo_k_direita, inimigo_k_baixo, inimigo_k_esquerda);
+        comunicar.setMovimento(person_k_cima, person_k_baixo, person_k_esquerda, person_k_direita);
 
         // A CADA VEZ QUE PRESIONAR ESPAÇO, UM NOVO PROJETIL É CRIADO
         if (person_k_disparo) {
             for(int i = 0; i < projeteis.size();) {
                 if (!projeteis.get(i).isAtivo()) {
                     projeteis.get(i).setPersonagem(personagens.get(0));
+                    projeteis.get(i).setDirecao(personagens.get(0).getDirecao());
                     projeteis.get(i).setAtivo(true);
                     break;
                 }
@@ -199,24 +171,15 @@ public class Game extends JPanel {
             }
             person_k_disparo = false;
         }
-        if (inimigo_k_disparo) {
-            for (int i = 0; i < projeteis.size();) {
-                if (!projeteis.get(i).isAtivo()) {
-                    projeteis.get(i).setPersonagem(personagens.get(1));
-                    projeteis.get(i).setAtivo(true);
-                    break;
-                }
-                i++;
-            }
-            inimigo_k_disparo = false;
-        }
     }
-
+    
     public void update() {
         //MOVIMENTA O PERSONAGEM
         for (int i = 0; i < personagens.size();) {
             personagens.get(i).setPosX(personagens.get(i).getPosX() + personagens.get(i).getVelX());
             personagens.get(i).setPosY(personagens.get(i).getPosY() + personagens.get(i).getVelY());
+            //System.out.println("posX"+personagens.get(i).getPosX());
+            //System.out.println("posY"+personagens.get(i).getPosY());
             i++;
         }
         //VERIFICA SE O PROJETIL ESTÁ NO ESTADO ATIVO, SE ESTIVER, ELE MOVIMENTA ESSE PROJETIL
@@ -229,6 +192,18 @@ public class Game extends JPanel {
             }
             i++;
         }
+        
+        // ATUALIZAR COOLDOWN HABILIDADES
+        for(int i = 0; i < personagens.size();) {
+            if(personagens.get(i).getAtributo().getHabilidade().isCorrer()){
+                personagens.get(i).getAtributo().getHabilidade().getCorrer().setCooldown();
+            }
+            if(personagens.get(i).getAtributo().getHabilidade().isTeleporte()){
+                personagens.get(i).getAtributo().getHabilidade().getTeleporte().setCooldown();
+            }
+            i++;
+        }
+        
         testeColisoes();
     }
 
@@ -305,8 +280,8 @@ public class Game extends JPanel {
                     catetoV = personagens.get(i).getPosY() - obstaculos.get(y).getPosY();
                     hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
                     if (hipotenusa <= obstaculos.get(y).getRaio() + personagens.get(i).getRaio()) { // verifica se houve colisão circular
-                            personagens.get(i).setPosX(personagens.get(i).getPosX() - personagens.get(i).getVelX()); // desfaz o movimento
-                            personagens.get(i).setPosY(personagens.get(i).getPosY() - personagens.get(i).getVelY()); // desfaz o movimento
+                        personagens.get(i).setPosX(personagens.get(i).getPosX() - personagens.get(i).getVelX()); // desfaz o movimento
+                        personagens.get(i).setPosY(personagens.get(i).getPosY() - personagens.get(i).getVelY()); // desfaz o movimento
                     }
                 }
                 y++;

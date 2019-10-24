@@ -54,7 +54,7 @@ public class Classe {
         
         atributo.setDano(10);
         atributo.setHp(200);
-        atributo.setVelocidade(3);
+        atributo.setVelocidade_padrao(3);
         
         habilidade.setCorrer(true);
         

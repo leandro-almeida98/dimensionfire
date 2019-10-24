@@ -2,10 +2,11 @@ package controle;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.StringTokenizer;
 import javax.imageio.ImageIO;
 
 public class Personagem extends Classe{
-    protected int id;
+    protected int idCliente;
     private BufferedImage parada;
     private BufferedImage direita_baixo;
     private BufferedImage direita_cima;
@@ -16,6 +17,7 @@ public class Personagem extends Classe{
     private BufferedImage cima;
     private BufferedImage baixo;
     private BufferedImage imgAtual;
+    private boolean movimento;
     
     private int posX;
     private int posY;
@@ -29,6 +31,7 @@ public class Personagem extends Classe{
     
     
     private long idPerson;
+
     
 
     public Personagem() {
@@ -52,7 +55,31 @@ public class Personagem extends Classe{
         this.velY = 0;
         this.vivo = true;
     }
-
+    
+    
+    StringTokenizer pegarXY;
+    public void habilidade_1(boolean ativo){
+        if(atributo.getHabilidade().isCorrer()){ 
+            if(ativo){
+                atributo.setVelocidade(atributo.getHabilidade().getCorrer().correr(atributo.getVelocidade_padrao()));
+                //atributo.getHabilidade().getCorrer().setPersonagem_parado(this.movimento);
+            }else{
+                atributo.setVelocidade(atributo.getVelocidade_padrao());
+                //atributo.getHabilidade().getCorrer().setPersonagem_parado(this.movimento);
+            }
+        }
+        if(atributo.getHabilidade().isTeleporte()){
+             if(ativo){
+                pegarXY = new StringTokenizer(atributo.getHabilidade().getTeleporte().Teleportar(getDirecao(), getPosX(), getPosY()));
+                // Verifica o próximo token
+                setPosX(Integer.parseInt(pegarXY.nextToken(":")));
+                setPosY(Integer.parseInt(pegarXY.nextToken(":"))); 
+                
+            }
+        }
+    }
+    
+    
     public BufferedImage getParada() {
         return parada;
     }
@@ -179,41 +206,42 @@ public class Personagem extends Classe{
     public void mover(boolean kup,  boolean kright, boolean kdown, boolean kleft) {
         setImgAtual(getParada());
         if (kup == true) {
-            setVelY(-getVelocidade());
+            setVelY(-atributo.getVelocidade());
             setImgAtual(getCima());
             setDirecao("up");
             if (kleft == true) {
-                setVelX(-getVelocidade());
+                setVelX(-atributo.getVelocidade());
                 setImgAtual(getEsquerda_cima());
                 setDirecao("up-left");
             } else if (kright == true) {
-                setVelX(getVelocidade());
+                setVelX(atributo.getVelocidade());
                 setImgAtual(getDireita_cima());
                 setDirecao("up-right");
             }
         } else if (kdown == true) {
-            setVelY(getVelocidade());
+            setVelY(atributo.getVelocidade());
             setImgAtual(getBaixo());
             setDirecao("down");
             if (kleft == true) {
-                setVelX(-getVelocidade());
+                setVelX(-atributo.getVelocidade());
                 setImgAtual(getEsquerda_baixo());
                 setDirecao("down-left");
             } else if (kright == true) {
-                setVelX(getVelocidade());
+                setVelX(atributo.getVelocidade());
                 setImgAtual(getDireita_baixo());
                 setDirecao("down-right");
             }
         } else if (kright == true) {
-            setVelX(getVelocidade());
+            setVelX(atributo.getVelocidade());
             setImgAtual(getDireita());
             setDirecao("right");
             
         } else if (kleft == true) {
-            setVelX(-getVelocidade());
+            setVelX(-atributo.getVelocidade());
             setImgAtual(getEsquerda());
             setDirecao("left");
         }
+        this.movimento = getImgAtual() != getParada();
     }
 
     public String getDirecao() {
@@ -264,45 +292,9 @@ public class Personagem extends Classe{
     public void setAtributo(Atributo atributos) {
         this.atributo = atributos;
     }
-    int distancia;
-    public void habilidade_1(){
-        if(atributo.getHabilidade().isCorrer()){ 
-            atributo.setVelocidade(getVelocidade() +5);
-        }
-        if(atributo.getHabilidade().isTeleporte()){
-            distancia = 20;
-            System.out.println("TP");
-            switch(getDirecao()){
-                case "up": 
-                    setPosY(getPosY()-distancia); 
-                    break;
-                case "down": 
-                    setPosY(getPosY()+distancia);
-                    break;
-                case "right": 
-                    setPosX(getPosX()+distancia);
-                    break;
-                case "left": 
-                    setPosX(getPosX()+distancia);
-                    break;
-                case "up-left": 
-                    setPosY(getPosY()-distancia);
-                    setPosX(getPosX()-distancia);
-                    break;
-                case "up-right": 
-                    setPosY(getPosY()-distancia);
-                    setPosX(getPosX()+distancia);
-                    break;
-                case "down-left": 
-                    setPosY(getPosY()+distancia);
-                    setPosX(getPosX()-distancia);
-                    break;
-                case "down-right": 
-                    setPosY(getPosY()+distancia);
-                    setPosX(getPosX()+distancia);
-                    break;
-            }
-            ;
-        }
+
+    public boolean isMovimento() {
+        return movimento;
     }
+    
 }
