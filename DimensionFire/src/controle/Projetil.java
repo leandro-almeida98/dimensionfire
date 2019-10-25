@@ -17,9 +17,9 @@ public class  Projetil  {
     private BufferedImage esquerda;
     private BufferedImage cima;
     private BufferedImage baixo;
-    private int posX;
-    private int posY;
-    private int raio;
+    private double posX;
+    private double posY;
+    private double raio;
     private int velX;
     private int velY;
     private BufferedImage imgAtual;
@@ -29,18 +29,28 @@ public class  Projetil  {
     private Som som; 
     private Personagem personagem;
     private String direcao;
+    private int destinoX;
+    private int destinoY;
+    
+    private double catetoX;
+    private double catetoY;
+    private double propocaoX;
+    private double propocaoY;
+    private double hipotenusa;
+    private double angulo;
     
     public Projetil() {
 
         try {
-            this.direita_cima   =   ImageIO.read(getClass().getResource("/imgs/projetil/projetil_up-right.gif"));
-            this.direita_baixo  =   ImageIO.read(getClass().getResource("/imgs/projetil/projetil_down-right.gif"));
-            this.esquerda_cima  =   ImageIO.read(getClass().getResource("/imgs/projetil/projetil_up-left.gif"));
-            this.esquerda_baixo =   ImageIO.read(getClass().getResource("/imgs/projetil/projetil_down-left.gif"));
-            this.baixo      =   ImageIO.read(getClass().getResource("/imgs/projetil/projetil_down.gif"));
-            this.cima       =   ImageIO.read(getClass().getResource("/imgs/projetil/projetil_up.gif"));
-            this.direita    =   ImageIO.read(getClass().getResource("/imgs/projetil/projetil_right.gif"));
-            this.esquerda   =   ImageIO.read(getClass().getResource("/imgs/projetil/projetil_left.gif"));
+            String url = "/imgs/projetil/projetil_up.gif";
+            this.direita_cima   =   ImageIO.read(getClass().getResource(url));
+            this.direita_baixo  =   ImageIO.read(getClass().getResource(url));
+            this.esquerda_cima  =   ImageIO.read(getClass().getResource(url));
+            this.esquerda_baixo =   ImageIO.read(getClass().getResource(url));
+            this.baixo      =   ImageIO.read(getClass().getResource(url));
+            this.cima       =   ImageIO.read(getClass().getResource(url));
+            this.direita    =   ImageIO.read(getClass().getResource(url));
+            this.esquerda   =   ImageIO.read(getClass().getResource(url));
         } catch (IOException e) {
             System.out.println(e);
         }
@@ -53,47 +63,33 @@ public class  Projetil  {
     }
 
     
+    
     // MOVE O PROJETIL
-    public void mover() {
-        System.out.println("Posiçção projetil: "+personagem.getDirecao());
-            switch(direcao){                
-                case "up": 
-                    setPosY(getPosY()-getVelocidade());
-                    setImgAtual(getCima());
-                    break;
-                case "up-right": 
-                    setPosY(getPosY()-getVelocidade());
-                    setPosX(getPosX()+getVelocidade());
-                    setImgAtual(getDireita_cima());
-                    break;
-                case "up-left": 
-                    setPosY(getPosY()-getVelocidade());
-                    setPosX(getPosX()-getVelocidade());
+    public void mover() {     
+            
+            //REGRA DE SINAIS, A multiplicação der positivo, + com + = +, se der negativo + com - da MENOS            
+            setPosX(getPosX()+ (propocaoX * getVelocidade()));
+            setPosY(getPosY()+ (propocaoY * getVelocidade()));
+            
+            if (propocaoY < 0) {
+                setImgAtual(getCima());
+                if (propocaoX < 0) {
                     setImgAtual(getEsquerda_cima());
-                    break;
-                case "right": 
-                    setPosX(getPosX()+getVelocidade());
-                    setImgAtual(getDireita());
-                    break;
-                case "left": 
-                    setPosX(getPosX()-getVelocidade());
-                    setImgAtual(getEsquerda());
-                    break;    
-                case "down-left": 
-                    setPosY(getPosY()+getVelocidade());
-                    setPosX(getPosX()-getVelocidade());
+                } else if (propocaoX > 0) {
+                    setImgAtual(getDireita_cima());
+                }
+            } else if (propocaoY>0) {
+                setImgAtual(getBaixo());
+                 if (propocaoX < 0) {
                     setImgAtual(getEsquerda_baixo());
-                    break;
-                case "down": 
-                    setPosY(getPosY()+getVelocidade());
-                    setImgAtual(getBaixo());
-                    break;
-                
-                case "down-right": 
-                    setPosY(getPosY()+getVelocidade());
-                    setPosX(getPosX()+getVelocidade());
+                } else if (propocaoX > 0) {
                     setImgAtual(getDireita_baixo());
-                    break;    
+                }
+            } else if (propocaoX > 0) { 
+                setImgAtual(getDireita());
+
+            } else if (propocaoX < 0) { 
+                setImgAtual(getEsquerda());
             }
             if(getPosX() >= Principal.LARGURA_TELA || getPosY() >= Principal.ALTURA_TELA || getPosX() <=0 || getPosY() <= 0 ){
                 this.ativo = false;
@@ -106,8 +102,6 @@ public class  Projetil  {
     public void setAtivo(boolean ativo) {
         if(ativo){
             getSom().Shoot();
-            setPosX(personagem.getPosX()+personagem.getRaio());
-            setPosY(personagem.getPosY()+personagem.getRaio());
             this.ativo = true;
         }else{
             this.ativo = false;
@@ -181,23 +175,23 @@ public class  Projetil  {
         this.baixo = baixo;
     }
 
-    public int getPosX() {
+    public double getPosX() {
         return posX;
     }
 
-    public void setPosX(int posX) {
+    public void setPosX(double posX) {
         this.posX = posX;
     }
 
-    public int getPosY() {
+    public double getPosY() {
         return posY;
     }
 
-    public void setPosY(int posY) {
+    public void setPosY(double posY) {
         this.posY = posY;
     }
 
-    public int getRaio() {
+    public double getRaio() {
         return raio;
     }
 
@@ -262,9 +256,29 @@ public class  Projetil  {
         this.personagem = personagem;
     }
 
-    public void setDirecao(String direcao) {
-        this.direcao = direcao;
+    public void setDirecao(int iniX, int iniY, int destinoX, int destinoY) {
+        setPosX(iniX);
+        setPosY(iniY);
+        catetoX = (destinoX-getRaio()) - getPosX() ;
+        catetoY = (destinoY-getRaio()) - getPosY();
+        hipotenusa = Math.sqrt((catetoX*catetoX)+(catetoY*catetoY));
+        propocaoX = catetoX  / hipotenusa ; 
+        propocaoY = catetoY  / hipotenusa ; 
+        
+        double seno = catetoY  / hipotenusa;
+        double cosseno = catetoX  / hipotenusa ;
+        
+        setAngulo( (double) Math.toDegrees(Math.atan2(destinoY - getPosY(), destinoX - getPosX())));
+        if (angulo < 0){
+          setAngulo(360 + angulo);
+        }
+        System.out.println("Angulo: "+angulo);
+        
     }
-
-
+    public double getAngulo() {
+        return angulo;
+    }
+    public void setAngulo(double angulo){
+        this.angulo = angulo;
+    }
 }
