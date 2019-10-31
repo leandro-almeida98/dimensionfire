@@ -11,7 +11,6 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -42,7 +41,7 @@ public class Game extends JPanel {
 
     private ArrayList<Projetil> projeteis;
     private ArrayList<Personagem> personagens;
-    private ArrayList<Obstrucoes> obstaculos;
+    private ArrayList<Barreira> obstaculos;
 
     private final int NumProjeteis = 100;
 
@@ -172,7 +171,7 @@ public class Game extends JPanel {
             }
         }).start();
     }
-
+    private int i_disparo=0;
     // GAMELOOP ----------------------------------
     public void gameloop() {
         while (true) { // loop infinito
@@ -198,21 +197,19 @@ public class Game extends JPanel {
         } else {
             personagens.get(0).habilidade_1(false);
         }
-        
-        
         personagens.get(0).mover(person_k_cima, person_k_direita, person_k_baixo, person_k_esquerda);
         comunicar.setMovimento(person_k_cima, person_k_baixo, person_k_esquerda, person_k_direita);
-
         // A CADA VEZ QUE PRESIONAR ESPAÇO, UM NOVO PROJETIL É CRIADO
         if (person_k_disparo) {
-            for(int i = 0; i < projeteis.size();) {
-                if (!projeteis.get(i).isAtivo()) {
-                    projeteis.get(i).setPersonagem(personagens.get(0));
-                    projeteis.get(i).setDirecao(personagens.get(0).getPosX(),personagens.get(0).getPosY(), mousePosX,mousePosY);
-                    projeteis.get(i).setAtivo(true);
+            while(i_disparo < projeteis.size()) {
+                if (!projeteis.get(i_disparo).isAtivo()) {
+                    projeteis.get(i_disparo).setPersonagem(personagens.get(0));
+                    projeteis.get(i_disparo).setDirecao(mousePosX,mousePosY);
+                    projeteis.get(i_disparo).setAtivo(true);
+                    i_disparo=0;
                     break;
                 }
-                i++;
+                i_disparo++;
             }
             person_k_disparo = false;
         }
@@ -223,8 +220,6 @@ public class Game extends JPanel {
         for (int i = 0; i < personagens.size();) {
             personagens.get(i).setPosX(personagens.get(i).getPosX() + personagens.get(i).getVelX());
             personagens.get(i).setPosY(personagens.get(i).getPosY() + personagens.get(i).getVelY());
-            //System.out.println("posX"+personagens.get(i).getPosX());
-            //System.out.println("posY"+personagens.get(i).getPosY());
             i++;
         }
         //VERIFICA SE O PROJETIL ESTÁ NO ESTADO ATIVO, SE ESTIVER, ELE MOVIMENTA ESSE PROJETIL
@@ -237,7 +232,6 @@ public class Game extends JPanel {
             }
             i++;
         }
-        
         // ATUALIZAR COOLDOWN HABILIDADES
         for(int i = 0; i < personagens.size();) {
             if(personagens.get(i).getAtributo().getHabilidade().isCorrer()){
@@ -248,30 +242,41 @@ public class Game extends JPanel {
             }
             i++;
         }
-        
         testeColisoes();
     }
 
     public void render() {
         repaint();
     }
-
+    // PARA DA O TELEPORTE;
+    private int ultPosX;
+    private int ultPosY;
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         setBackground(Color.WHITE);
         //g.setColor(Color.RED);
-        
         //MOSTRA OS PERSONAGENS
         for (int i = 0; i < personagens.size();) {
             if (personagens.get(i).getVivo()) {
-                g.drawImage(personagens.get(i).getImgAtual(), personagens.get(i).getPosX(), personagens.get(i).getPosY(), null);
+                for (int y = 0; y < obstaculos.size();) {
+                    if (obstaculos.get(y).isAtivo()) {
+                        catetoH = personagens.get(i).getPosX() - obstaculos.get(y).getPosX();
+                        catetoV = personagens.get(i).getPosY() - obstaculos.get(y).getPosY();
+                        hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
+                        if (hipotenusa <= obstaculos.get(y).getRaio() + personagens.get(i).getRaio()) { // verifica se houve colisão circular
+                           personagens.get(i).setPosX(ultPosX);
+                           personagens.get(i).setPosY(ultPosY);
+                        }
+                    }
+                    y++;
+                }
+                g.drawImage(personagens.get(i).getImgAtual(), personagens.get(i).getPosX(), personagens.get(i).getPosY(), null);    
+                ultPosX = personagens.get(i).getPosX();
+                ultPosY = personagens.get(i).getPosY();
             }
             i++;
         }
-        
-        
-        
         //MOSTRA OS OBSTACULOS
         for (int i = 0; i < obstaculos.size();) {
             if (obstaculos.get(i).isAtivo()) {
@@ -279,59 +284,25 @@ public class Game extends JPanel {
             }
             i++;
         }
-        
-        
-        
         //MOSTRA OS PROJETEIS
         for (int i = 0; i < projeteis.size();) {
             if (projeteis.get(i).isAtivo()) {
-                
                 Graphics2D g2d = (Graphics2D)g;
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-                
                 AffineTransform af = new AffineTransform();
                 af.translate(projeteis.get(i).getPosX(), projeteis.get(i).getPosY());
-                
-
-                /*
-                
-                //roda o projetil
-                g2d.rotate(Math.toRadians(90));
-                //System.out.println("Atualizando angulo:"+projeteis.get(i).getAngulo());
-                g2d.setTransform(old);
-                
-                
-                //g2d.rotate(1.6,  projeteis.get(i).getPosX(), projeteis.get(i).getPosY());
-                g2d.drawImage(projeteis.get(i).getImgAtual(), af, null); 
-                
-                AffineTransform tx = AffineTransform.getRotateInstance(projeteis.get(i).getAngulo(), projeteis.get(i).getPosX(), projeteis.get(i).getPosY());
-                g2d.setTransform(tx);
-                //AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_BILINEAR);
-                
-                g2d.drawImage(op.filter(image, null), projeteis.get(i).getPosX(), projeteis.get(i).getPosY(), null);
-                
-                */
-                
-                //Make a backup so that we can reset our graphics object after using it.
                 AffineTransform backup = g2d.getTransform();
-                //rx is the x coordinate for rotation, ry is the y coordinate for rotation, and angle
-                //is the angle to rotate the image. If you want to rotate around the center of an image,
-                //use the image's center x and y coordinates for rx and ry.
-                 AffineTransform a = AffineTransform.getRotateInstance(projeteis.get(i).getAngulo(), projeteis.get(i).getPosX(), projeteis.get(i).getPosY());
-                //Set our Graphics2D object to the transform
+                AffineTransform a = AffineTransform.getRotateInstance(projeteis.get(i).getAngulo(), projeteis.get(i).getPosX(), projeteis.get(i).getPosY());
                 g2d.setTransform(a);
-                //Draw our image like normal
                 g2d.drawImage(projeteis.get(i).getImgAtual(), af, null); 
-                //Reset our graphics object so we can draw with it again.
                 g2d.setTransform(backup);
-                
             }
             i++;
         }
-        
-        
+        // LINK ABAIXO ROTACIONAR IMAGEM 
+        // https://stackoverflow.com/questions/37758061/rotate-a-buffered-image-in-java
     }
     
     
@@ -349,7 +320,6 @@ public class Game extends JPanel {
             } else if (personagens.get(i).getPosY() <= 0) { // lado superior
                 personagens.get(i).setPosY(0);
             }
-            
             // COLISÃO CIRCULAR
             for (int y = 0; y < personagens.size();) {
                 if (personagens.get(i).getIdPerson() != personagens.get(y).getIdPerson() && personagens.get(y).getVivo()) {
@@ -385,7 +355,6 @@ public class Game extends JPanel {
     } // FIM TESTE COLISÕES
     
     public void colisaoProjeteisObstaculos(int i) {
-        boolean atingiu = false;
         for (int y = 0; y < obstaculos.size();) {
             catetoH = projeteis.get(i).getPosX() - obstaculos.get(y).getPosX();
             catetoV = projeteis.get(i).getPosY() - obstaculos.get(y).getPosY();

@@ -1,8 +1,6 @@
 package controle;
 
 
-import controle.Habilidades.Teleporte;
-import static controle.Principal.ALTURA_TELA;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
@@ -42,7 +40,7 @@ public class  Projetil  {
     public Projetil() {
 
         try {
-            String url = "/imgs/projetil/projetil_up.gif";
+            String url = "/imgs/projetil/projetil_circle.png";
             this.direita_cima   =   ImageIO.read(getClass().getResource(url));
             this.direita_baixo  =   ImageIO.read(getClass().getResource(url));
             this.esquerda_cima  =   ImageIO.read(getClass().getResource(url));
@@ -256,9 +254,9 @@ public class  Projetil  {
         this.personagem = personagem;
     }
 
-    public void setDirecao(int iniX, int iniY, int destinoX, int destinoY) {
-        setPosX(iniX);
-        setPosY(iniY);
+    public void setDirecao( int destinoX, int destinoY) {
+        setPosX(personagem.getPosX()+personagem.getRaio());
+        setPosY(personagem.getPosY()+personagem.getRaio());
         catetoX = (destinoX-getRaio()) - getPosX() ;
         catetoY = (destinoY-getRaio()) - getPosY();
         hipotenusa = Math.sqrt((catetoX*catetoX)+(catetoY*catetoY));

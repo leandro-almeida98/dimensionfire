@@ -19,6 +19,7 @@ public class Personagem extends Classe{
     private BufferedImage imgAtual;
     private boolean movimento;
     
+    
     private int posX;
     private int posY;
     private int raio;
@@ -33,18 +34,19 @@ public class Personagem extends Classe{
     private long idPerson;
 
     
-
+    String link;
     public Personagem() {
         try {
-            this.parada         =   ImageIO.read(getClass().getResource("/imgs/parada.gif"));
-            this.direita_cima   =   ImageIO.read(getClass().getResource("/imgs/direita_cima.gif"));
-            this.direita_baixo  =   ImageIO.read(getClass().getResource("/imgs/direita_baixo.gif"));
-            this.esquerda_cima  =   ImageIO.read(getClass().getResource("/imgs/esquerda_cima.gif"));
-            this.esquerda_baixo =   ImageIO.read(getClass().getResource("/imgs/esquerda_baixo.gif"));
-            this.baixo      =   ImageIO.read(getClass().getResource("/imgs/baixo.gif"));
-            this.cima       =   ImageIO.read(getClass().getResource("/imgs/cima.gif"));
-            this.direita    =   ImageIO.read(getClass().getResource("/imgs/direita.gif"));
-            this.esquerda   =   ImageIO.read(getClass().getResource("/imgs/esquerda.gif"));
+            link = "/imgs/personagem/persona_1.png";
+            this.parada         =   ImageIO.read(getClass().getResource(link));
+            this.direita_cima   =   ImageIO.read(getClass().getResource(link));
+            this.direita_baixo  =   ImageIO.read(getClass().getResource(link));
+            this.esquerda_cima  =   ImageIO.read(getClass().getResource(link));
+            this.esquerda_baixo =   ImageIO.read(getClass().getResource(link));
+            this.baixo      =   ImageIO.read(getClass().getResource(link));
+            this.cima       =   ImageIO.read(getClass().getResource(link));
+            this.direita    =   ImageIO.read(getClass().getResource(link));
+            this.esquerda   =   ImageIO.read(getClass().getResource(link));
         } catch (IOException e) {
             System.out.println(e);
         }

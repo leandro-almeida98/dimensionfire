@@ -5,8 +5,8 @@
  */
 package controle;
 
-import controle.Habilidades.Correr;
-import controle.Habilidades.Teleporte;
+import Habilidades.Correr;
+import Habilidades.Teleporte;
 
 /**
  *
