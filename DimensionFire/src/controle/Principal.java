@@ -18,7 +18,7 @@ public class Principal {
         Game game = new Game();
         game.setPreferredSize(new Dimension(LARGURA_TELA, ALTURA_TELA));
         //progresso.setSize(300, 50);
-        //janela.add(progresso);
+        //janela.add(progresso); A
         //janela.setLocationRelativeTo(null);
         //setCursor(new Cursor(Cursor.WAIT_CURSOR));
         //progresso.setVisible(true);
