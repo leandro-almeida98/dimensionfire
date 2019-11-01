@@ -33,7 +33,7 @@ public class Classe {
         
         atributo.setDano(15);
         atributo.setHp(100);
-        atributo.setVelocidade(3);
+        atributo.setVelocidade(2);
         
         habilidade.setTeleporte(true);
         

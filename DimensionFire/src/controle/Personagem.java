@@ -25,7 +25,16 @@ public class Personagem extends Classe{
     private int raio;
     private int velX;
     private int velY;
-    public double angulo;
+    
+    
+    // VARIAVEIS DO CALCULO DO TRAJETIL
+    private double angulo;
+    private double angleRad;
+    private double angleDeg;
+    private double catetoX;
+    private double catetoY;
+    private double hipotenusa;
+    
     
     private String direcao;
     private boolean vivo;
@@ -299,5 +308,28 @@ public class Personagem extends Classe{
     public boolean isMovimento() {
         return movimento;
     }
+
+    public double getAngulo() {
+        return angulo;
+    }
+
+    public void setAngulo(double angulo) {
+        this.angulo = angulo;
+    }
     
+    
+    public void setDirecaoMouse( int destinoX, int destinoY) {
+
+        catetoX = (destinoX-getRaio()) - getPosX() ;
+        catetoY = (destinoY-getRaio()) - getPosY();
+        
+        angleRad = Math.atan2(catetoX,catetoY);
+        angleDeg = Math.toDegrees(angleRad) -90; 
+        if (angleDeg < 0) 
+            angleDeg += 360; 
+        else if (angleDeg > 360) 
+            angleDeg -= 360;
+        setAngulo(-angleDeg);
+        System.out.println("Angulo: "+getAngulo());
+    }
 }

@@ -57,7 +57,7 @@ public class Game extends JPanel {
         obstaculos = mapa.mapa_1(); // POPULA OBSTACULOS
         personagens.add(classe.Matias()); //POPULA PERSONAGENS
         personagens.add(classe.Julios()); //POPULA PERSONAGENS
-        personagem = personagens.get(0);
+        //personagem = personagens.get(0);
         
 
         setFocusable(true);
@@ -221,6 +221,7 @@ public class Game extends JPanel {
         for (int i = 0; i < personagens.size();) {
             personagens.get(i).setPosX(personagens.get(i).getPosX() + personagens.get(i).getVelX());
             personagens.get(i).setPosY(personagens.get(i).getPosY() + personagens.get(i).getVelY());
+            personagens.get(i).setDirecaoMouse(mousePosX, mousePosY);
             i++;
         }
         //VERIFICA SE O PROJETIL ESTÁ NO ESTADO ATIVO, SE ESTIVER, ELE MOVIMENTA ESSE PROJETIL
@@ -243,24 +244,12 @@ public class Game extends JPanel {
             }
             i++;
         }
-        //calular angulo do personagem
-        double cateto1 = mousePosY - (personagem.getPosY()+personagem.getRaio());
-        double cateto2 = mousePosX - (personagem.getPosX()+personagem.getRaio());
-        double hipotenusa = Math.sqrt((cateto1*cateto1)+(cateto2*cateto2));
-        double angleRad = Math.atan2(cateto2,cateto1);
-        double angleDeg = Math.toDegrees(angleRad) -90; 
-        if (angleDeg < 0) 
-            angleDeg += 360; 
-        else if (angleDeg > 360) 
-            angleDeg -= 360;
-        //System.out.println("Angulo em graus = " +angleDeg);
-        personagem.angulo = -angleDeg;
         testeColisoes();
         
         ax = mousePosX;
         ay = mousePosY;
-        bx = personagem.getPosX()+personagem.getRaio();
-        by = personagem.getPosY()+personagem.getRaio();
+        bx = personagens.get(0).getPosX()+personagens.get(0).getRaio();
+        by = personagens.get(0).getPosY()+personagens.get(0).getRaio();
     }
 
     public void render() {
@@ -272,21 +261,17 @@ public class Game extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        Graphics2D g2D  = (Graphics2D)g;
-        AffineTransform af = new AffineTransform();
-        af.translate(personagem.getPosX(), personagem.getPosY());
-        af.rotate(Math.toRadians(personagem.angulo),personagem.getRaio(),personagem.getRaio());
-
-        g2D.drawImage(personagem.getImgAtual(), af, null);
+        Graphics2D g2D1  = (Graphics2D)g;
+        
         //g.setColor(Color.RED);
-        g2D.drawLine((int)ax, (int)ay, (int)bx, (int)by);
+        g2D1.drawLine((int)ax, (int)ay, (int)bx, (int)by);
         
         
         
         
         
         //MOSTRA OS OUTROS PERSONAGENS
-        for (int i = 1; i < personagens.size();) {
+        for (int i = 0; i < personagens.size();) {
             if (personagens.get(i).getVivo()) {
                 for (int y = 0; y < obstaculos.size();) {
                     if (obstaculos.get(y).isAtivo()) {
@@ -300,7 +285,13 @@ public class Game extends JPanel {
                     }
                     y++;
                 }
-                g.drawImage(personagens.get(i).getImgAtual(), personagens.get(i).getPosX(), personagens.get(i).getPosY(), null);    
+                Graphics2D g2D  = (Graphics2D)g;
+                AffineTransform af = new AffineTransform();
+                af.translate(personagens.get(i).getPosX(), personagens.get(i).getPosY());
+                af.rotate(Math.toRadians(personagens.get(i).getAngulo()),personagens.get(i).getRaio(),personagens.get(i).getRaio());
+
+                g2D.drawImage(personagens.get(i).getImgAtual(), af, null);
+                //g.drawImage(personagens.get(i).getImgAtual(), personagens.get(i).getPosX(), personagens.get(i).getPosY(), null);    
                 ultPosX = personagens.get(i).getPosX();
                 ultPosY = personagens.get(i).getPosY();
             }
@@ -311,7 +302,7 @@ public class Game extends JPanel {
             if (obstaculos.get(i).isAtivo()) {
                 g.drawImage(obstaculos.get(i).getImg(), obstaculos.get(i).getPosX(), obstaculos.get(i).getPosY(), null);
             }
-            i++;
+            i++; 
         }
         //MOSTRA OS PROJETEIS
         for (int i = 0; i < projeteis.size();) {
@@ -320,14 +311,10 @@ public class Game extends JPanel {
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
                 g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
                 g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-                AffineTransform af2 = new AffineTransform();
-                af2.translate(projeteis.get(i).getPosX(), projeteis.get(i).getPosY());
-                //AffineTransform backup = g2d.getTransform();
-                //AffineTransform a = AffineTransform.getRotateInstance(projeteis.get(i).getAngulo(), projeteis.get(i).getPosX(), projeteis.get(i).getPosY());
-                //g2d.setTransform(a);
-                
+                AffineTransform af = new AffineTransform();
+                af.translate(projeteis.get(i).getPosX(), projeteis.get(i).getPosY()); // PEGA A POSIÇÃO DA IMAGEM QUE VAI SER ROTACIONADA
+                af.rotate(Math.toRadians(projeteis.get(i).getAngulo()), projeteis.get(i).getRaio(), projeteis.get(i).getRaio()); // GIRAR A IMAGEM
                 g2d.drawImage(projeteis.get(i).getImgAtual(), af, null); 
-                //g2d.setTransform(backup);
             }
             i++;
         }

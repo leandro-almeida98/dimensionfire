@@ -27,20 +27,22 @@ public class  Projetil  {
     private Som som; 
     private Personagem personagem;
     private String direcao;
-    private int destinoX;
-    private int destinoY;
     
+    // VARIAVEIS DO CALCULO DO TRAJETIL
     private double catetoX;
     private double catetoY;
     private double propocaoX;
     private double propocaoY;
     private double hipotenusa;
     private double angulo;
+    private double angleRad;
+    private double angleDeg;
+    
     
     public Projetil() {
 
         try {
-            String url = "/imgs/projetil/projetil_circle.png";
+            String url = "/imgs/projetil/projetil_left.gif";
             this.direita_cima   =   ImageIO.read(getClass().getResource(url));
             this.direita_baixo  =   ImageIO.read(getClass().getResource(url));
             this.esquerda_cima  =   ImageIO.read(getClass().getResource(url));
@@ -263,15 +265,13 @@ public class  Projetil  {
         propocaoX = catetoX  / hipotenusa ; 
         propocaoY = catetoY  / hipotenusa ; 
         
-        double seno = catetoY  / hipotenusa;
-        double cosseno = catetoX  / hipotenusa ;
-        
-        setAngulo( (double) Math.toDegrees(Math.atan2(destinoY - getPosY(), destinoX - getPosX())));
-        if (angulo < 0){
-          setAngulo(360 + angulo);
-        }
-        //System.out.println("Angulo: "+angulo);
-        
+        angleRad = Math.atan2(catetoX,catetoY);
+        angleDeg = Math.toDegrees(angleRad) -90; 
+        if (angleDeg < 0) 
+            angleDeg += 360; 
+        else if (angleDeg > 360) 
+            angleDeg -= 360;
+        setAngulo(-angleDeg);
     }
     public double getAngulo() {
         return angulo;
