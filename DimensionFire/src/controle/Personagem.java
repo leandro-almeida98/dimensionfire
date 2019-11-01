@@ -25,6 +25,7 @@ public class Personagem extends Classe{
     private int raio;
     private int velX;
     private int velY;
+    public double angulo;
     
     private String direcao;
     private boolean vivo;

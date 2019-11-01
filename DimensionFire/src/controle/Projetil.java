@@ -270,7 +270,7 @@ public class  Projetil  {
         if (angulo < 0){
           setAngulo(360 + angulo);
         }
-        System.out.println("Angulo: "+angulo);
+        //System.out.println("Angulo: "+angulo);
         
     }
     public double getAngulo() {
