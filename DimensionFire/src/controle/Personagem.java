@@ -1,5 +1,8 @@
 package controle;
 
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.StringTokenizer;
@@ -7,21 +10,14 @@ import javax.imageio.ImageIO;
 
 public class Personagem extends Classe{
     protected int idCliente;
-    private BufferedImage parada;
-    private BufferedImage direita_baixo;
-    private BufferedImage direita_cima;
-    private BufferedImage esquerda_baixo;
-    private BufferedImage esquerda_cima;
-    private BufferedImage direita;
-    private BufferedImage esquerda;
-    private BufferedImage cima;
-    private BufferedImage baixo;
-    private BufferedImage imgAtual;
+    private BufferedImage imagem;
     private boolean movimento;
     
     
     private int posX;
     private int posY;
+    private int ultPosX;
+    private int ultPosY;
     private int raio;
     private int velX;
     private int velY;
@@ -32,9 +28,7 @@ public class Personagem extends Classe{
     private double angleRad;
     private double angleDeg;
     private double catetoX;
-    private double catetoY;
-    private double hipotenusa;
-    
+    private double catetoY;  
     
     private String direcao;
     private boolean vivo;
@@ -43,20 +37,11 @@ public class Personagem extends Classe{
     
     private long idPerson;
 
+    private AffineTransform af;
     
-    String link;
     public Personagem() {
         try {
-            link = "/imgs/personagem/persona_1.png";
-            this.parada         =   ImageIO.read(getClass().getResource(link));
-            this.direita_cima   =   ImageIO.read(getClass().getResource(link));
-            this.direita_baixo  =   ImageIO.read(getClass().getResource(link));
-            this.esquerda_cima  =   ImageIO.read(getClass().getResource(link));
-            this.esquerda_baixo =   ImageIO.read(getClass().getResource(link));
-            this.baixo      =   ImageIO.read(getClass().getResource(link));
-            this.cima       =   ImageIO.read(getClass().getResource(link));
-            this.direita    =   ImageIO.read(getClass().getResource(link));
-            this.esquerda   =   ImageIO.read(getClass().getResource(link));
+            this.imagem         =   ImageIO.read(getClass().getResource("/imgs/personagem/persona_1.png"));
         } catch (IOException e) {
             System.out.println(e);
         }
@@ -66,6 +51,8 @@ public class Personagem extends Classe{
         this.velX = 0;
         this.velY = 0;
         this.vivo = true;
+        this.idPerson = 000000;
+        
     }
     
     
@@ -89,79 +76,6 @@ public class Personagem extends Classe{
                 
             }
         }
-    }
-    
-    
-    public BufferedImage getParada() {
-        return parada;
-    }
-
-    public void setParada(BufferedImage parada) {
-        this.parada = parada;
-    }
-
-    public BufferedImage getDireita_baixo() {
-        return direita_baixo;
-    }
-
-    public void setDireita_baixo(BufferedImage direita_baixo) {
-        this.direita_baixo = direita_baixo;
-    }
-
-    public BufferedImage getDireita_cima() {
-        return direita_cima;
-    }
-
-    public void setDireita_cima(BufferedImage direita_cima) {
-        this.direita_cima = direita_cima;
-    }
-
-    public BufferedImage getEsquerda_baixo() {
-        return esquerda_baixo;
-    }
-
-    public void setEsquerda_baixo(BufferedImage esquerda_baixo) {
-        this.esquerda_baixo = esquerda_baixo;
-    }
-
-    public BufferedImage getEsquerda_cima() {
-        return esquerda_cima;
-    }
-
-    public void setEsquerda_cima(BufferedImage esquerda_cima) {
-        this.esquerda_cima = esquerda_cima;
-    }
-
-    public BufferedImage getDireita() {
-        return direita;
-    }
-
-    public void setDireita(BufferedImage direita) {
-        this.direita = direita;
-    }
-
-    public BufferedImage getEsquerda() {
-        return esquerda;
-    }
-
-    public void setEsquerda(BufferedImage esquerda) {
-        this.esquerda = esquerda;
-    }
-
-    public BufferedImage getCima() {
-        return cima;
-    }
-
-    public void setCima(BufferedImage cima) {
-        this.cima = cima;
-    }
-
-    public BufferedImage getBaixo() {
-        return baixo;
-    }
-
-    public void setBaixo(BufferedImage baixo) {
-        this.baixo = baixo;
     }
 
     public int getPosX() {
@@ -204,56 +118,51 @@ public class Personagem extends Classe{
         this.velY = velY;
     }
 
-    public BufferedImage getImgAtual() {
-        return imgAtual;
+    public BufferedImage getImagem() {
+        return imagem;
     }
 
-    public void setImgAtual(BufferedImage imgAtual) {
-        this.imgAtual = imgAtual;
+    public void setImagem(BufferedImage imagem) {
+        this.imagem = imagem;
     }
     public int getVelocidade() {
         return atributo.getVelocidade();
     }
     
     public void mover(boolean kup,  boolean kright, boolean kdown, boolean kleft) {
-        setImgAtual(getParada());
+        this.movimento = false;
         if (kup == true) {
+            this.movimento = true;
             setVelY(-atributo.getVelocidade());
-            setImgAtual(getCima());
             setDirecao("up");
             if (kleft == true) {
                 setVelX(-atributo.getVelocidade());
-                setImgAtual(getEsquerda_cima());
                 setDirecao("up-left");
             } else if (kright == true) {
                 setVelX(atributo.getVelocidade());
-                setImgAtual(getDireita_cima());
                 setDirecao("up-right");
             }
         } else if (kdown == true) {
+            this.movimento = true;
             setVelY(atributo.getVelocidade());
-            setImgAtual(getBaixo());
             setDirecao("down");
             if (kleft == true) {
                 setVelX(-atributo.getVelocidade());
-                setImgAtual(getEsquerda_baixo());
                 setDirecao("down-left");
             } else if (kright == true) {
                 setVelX(atributo.getVelocidade());
-                setImgAtual(getDireita_baixo());
                 setDirecao("down-right");
             }
         } else if (kright == true) {
+            this.movimento = true;
             setVelX(atributo.getVelocidade());
-            setImgAtual(getDireita());
             setDirecao("right");
             
         } else if (kleft == true) {
+            this.movimento = true;
             setVelX(-atributo.getVelocidade());
-            setImgAtual(getEsquerda());
             setDirecao("left");
         }
-        this.movimento = getImgAtual() != getParada();
     }
 
     public String getDirecao() {
@@ -319,10 +228,8 @@ public class Personagem extends Classe{
     
     
     public void setDirecaoMouse( int destinoX, int destinoY) {
-
         catetoX = (destinoX-getRaio()) - getPosX() ;
         catetoY = (destinoY-getRaio()) - getPosY();
-        
         angleRad = Math.atan2(catetoX,catetoY);
         angleDeg = Math.toDegrees(angleRad) -90; 
         if (angleDeg < 0) 
@@ -330,6 +237,14 @@ public class Personagem extends Classe{
         else if (angleDeg > 360) 
             angleDeg -= 360;
         setAngulo(-angleDeg);
-        System.out.println("Angulo: "+getAngulo());
+    }
+    
+    public AffineTransform affinetransform(){
+        af = new AffineTransform();
+        af.translate(getPosX(), getPosY());
+        af.rotate(Math.toRadians(getAngulo()),getRaio(),getRaio());
+        ultPosX = getPosX();
+        ultPosY = getPosY();
+        return af;
     }
 }

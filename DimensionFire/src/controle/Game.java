@@ -229,8 +229,6 @@ public class Game extends JPanel {
         for (int i = 0; i < projeteis.size();) {
             if (projeteis.get(i).isAtivo()) {
                 projeteis.get(i).mover();
-                colisaoProjeteisPersonagens(i);
-                colisaoProjeteisObstaculos(i);
             }
             i++;
         }
@@ -255,77 +253,20 @@ public class Game extends JPanel {
     public void render() {
         repaint();
     }
-    // PARA DA O TELEPORTE;
-    private int ultPosX;
-    private int ultPosY;
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        Graphics2D g2D1  = (Graphics2D)g;
-        
-        //g.setColor(Color.RED);
-        g2D1.drawLine((int)ax, (int)ay, (int)bx, (int)by);
-        
-        
-        
-        
-        
-        //MOSTRA OS OUTROS PERSONAGENS
-        for (int i = 0; i < personagens.size();) {
-            if (personagens.get(i).getVivo()) {
-                for (int y = 0; y < obstaculos.size();) {
-                    if (obstaculos.get(y).isAtivo()) {
-                        catetoH = personagens.get(i).getPosX() - obstaculos.get(y).getPosX();
-                        catetoV = personagens.get(i).getPosY() - obstaculos.get(y).getPosY();
-                        hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
-                        if (hipotenusa <= obstaculos.get(y).getRaio() + personagens.get(i).getRaio()) { // verifica se houve colisão circular
-                           personagens.get(i).setPosX(ultPosX);
-                           personagens.get(i).setPosY(ultPosY);
-                        }
-                    }
-                    y++;
-                }
-                Graphics2D g2D  = (Graphics2D)g;
-                AffineTransform af = new AffineTransform();
-                af.translate(personagens.get(i).getPosX(), personagens.get(i).getPosY());
-                af.rotate(Math.toRadians(personagens.get(i).getAngulo()),personagens.get(i).getRaio(),personagens.get(i).getRaio());
-
-                g2D.drawImage(personagens.get(i).getImgAtual(), af, null);
-                //g.drawImage(personagens.get(i).getImgAtual(), personagens.get(i).getPosX(), personagens.get(i).getPosY(), null);    
-                ultPosX = personagens.get(i).getPosX();
-                ultPosY = personagens.get(i).getPosY();
-            }
-            i++;
-        }
-        //MOSTRA OS OBSTACULOS
-        for (int i = 0; i < obstaculos.size();) {
-            if (obstaculos.get(i).isAtivo()) {
-                g.drawImage(obstaculos.get(i).getImg(), obstaculos.get(i).getPosX(), obstaculos.get(i).getPosY(), null);
-            }
-            i++; 
-        }
-        //MOSTRA OS PROJETEIS
-        for (int i = 0; i < projeteis.size();) {
-            if (projeteis.get(i).isAtivo()) {
-                Graphics2D g2d = (Graphics2D)g;
-                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                g2d.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
-                AffineTransform af = new AffineTransform();
-                af.translate(projeteis.get(i).getPosX(), projeteis.get(i).getPosY()); // PEGA A POSIÇÃO DA IMAGEM QUE VAI SER ROTACIONADA
-                af.rotate(Math.toRadians(projeteis.get(i).getAngulo()), projeteis.get(i).getRaio(), projeteis.get(i).getRaio()); // GIRAR A IMAGEM
-                g2d.drawImage(projeteis.get(i).getImgAtual(), af, null); 
-            }
-            i++;
-        }
-        // LINK ABAIXO ROTACIONAR IMAGEM 
-        // https://stackoverflow.com/questions/37758061/rotate-a-buffered-image-in-java
-    }
+    
+    
     
     
     // OUTROS MÉTODOS ------------------------------------------
     public void testeColisoes() {
-        // COLISÃO NAS BORDA DA TELA TELA
+        Personagem_Tela_colisao();
+        Personagem_Personagem_colisao();
+        Personagem_Barreira_colisao();
+        Projetil_Barreira_colisao();
+        Projetil_Personagem_colisao();
+        
+    } // FIM TESTE COLISÕES
+    public void Personagem_Tela_colisao(){
         for (int i = 0; i < personagens.size();) {
             if (personagens.get(i).getPosX() + (personagens.get(i).getRaio() * 2) >= Principal.LARGURA_TELA) { // lado direito
                 personagens.get(i).setPosX(Principal.LARGURA_TELA - (personagens.get(i).getRaio() * 2));
@@ -337,6 +278,11 @@ public class Game extends JPanel {
             } else if (personagens.get(i).getPosY() <= 0) { // lado superior
                 personagens.get(i).setPosY(0);
             }
+            i++;
+        }
+    }
+    public void Personagem_Personagem_colisao(){
+        for (int i = 0; i < personagens.size();) {
             // COLISÃO CIRCULAR
             for (int y = 0; y < personagens.size();) {
                 if (personagens.get(i).getIdPerson() != personagens.get(y).getIdPerson() && personagens.get(y).getVivo()) {
@@ -352,7 +298,8 @@ public class Game extends JPanel {
             }
             i++;
         }
-
+    }
+    public void Personagem_Barreira_colisao(){
         // COLISÃO DO PERSONAGEM COM OS OBSTACULO DO MAPA
         for (int i = 0; i < personagens.size();) {
             for (int y = 0; y < obstaculos.size();) {
@@ -360,7 +307,7 @@ public class Game extends JPanel {
                     catetoH = personagens.get(i).getPosX() - obstaculos.get(y).getPosX();
                     catetoV = personagens.get(i).getPosY() - obstaculos.get(y).getPosY();
                     hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
-                    if (hipotenusa <= obstaculos.get(y).getRaio() + personagens.get(i).getRaio()) { // verifica se houve colisão circular
+                    if (hipotenusa <= (obstaculos.get(y).getRaio() + personagens.get(i).getRaio()) /2) { // verifica se houve colisão circular
                         personagens.get(i).setPosX(personagens.get(i).getPosX() - personagens.get(i).getVelX()); // desfaz o movimento
                         personagens.get(i).setPosY(personagens.get(i).getPosY() - personagens.get(i).getVelY()); // desfaz o movimento
                     }
@@ -369,47 +316,84 @@ public class Game extends JPanel {
             }
             i++;
         }
-    } // FIM TESTE COLISÕES
-    
-    public void colisaoProjeteisObstaculos(int i) {
-        for (int y = 0; y < obstaculos.size();) {
-            catetoH = projeteis.get(i).getPosX() - obstaculos.get(y).getPosX();
-            catetoV = projeteis.get(i).getPosY() - obstaculos.get(y).getPosY();
-            hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
-            if (hipotenusa <= projeteis.get(i).getRaio() + obstaculos.get(y).getRaio()) { // verifica se houve colisão circular
-                if (projeteis.get(i).getDano() < obstaculos.get(y).getResistencia()) {
-                    if(projeteis.get(i).isAtivo()){
-                        projeteis.get(i).setAtivo(false);
-                    }
-                } else {
-                    if(obstaculos.get(y).isAtivo()){
-                        obstaculos.get(y).setAtivo(false);
-                        som.destruicao_obstaculo();
-                        System.out.println("Atingiu");
+    }
+    public void Projetil_Barreira_colisao() {
+        for (int i = 0; i < projeteis.size();) {
+            for (int y = 0; y < obstaculos.size();) {
+                catetoH = projeteis.get(i).getPosX() - obstaculos.get(y).getPosX();
+                catetoV = projeteis.get(i).getPosY() - obstaculos.get(y).getPosY();
+                hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
+                if (hipotenusa <= projeteis.get(i).getRaio() + obstaculos.get(y).getRaio()) { // verifica se houve colisão circular
+                    if (projeteis.get(i).getDano() < obstaculos.get(y).getResistencia()) {
+                        if(projeteis.get(i).isAtivo()){
+                            projeteis.get(i).setAtivo(false);
+                        }
+                    } else {
+                        if(obstaculos.get(y).isAtivo()){
+                            obstaculos.get(y).setAtivo(false);
+                            som.destruicao_obstaculo();
+                            System.out.println("Atingiu");
+                        }
                     }
                 }
+                y++;
             }
-            y++;
+            i++;
+        }
+    }
+    public void Projetil_Personagem_colisao() {
+        for (int i = 0; i < projeteis.size();) {
+            if(projeteis.get(i).isAtivo()){
+                for (int y = 0; y < personagens.size();) {
+                    if (personagens.get(y).getVivo() && personagens.get(y).getIdPerson() != projeteis.get(i).getIdPersonagem()) {// VERIFICA SE DONO DO PROJETIL É DIFERENTE DO ALVO QUE ESTÁ COLIDINDO
+                        catetoH = projeteis.get(i).getPosX() - personagens.get(y).getPosX();
+                        catetoV = projeteis.get(i).getPosY() - personagens.get(y).getPosY();
+                        hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
+                        if (hipotenusa <= projeteis.get(i).getRaio() + personagens.get(y).getRaio()) { // verifica se houve colisão circula
+                            personagens.get(y).recebeDano(projeteis.get(i).getDano()); // RETIRA HP DO INIMIGO
+                            System.out.println("ID: "+personagens.get(y).getIdPerson()+" Hp: " + personagens.get(y).getHp());
+                            progresso.setValue(personagens.get(y).getHp());
+                            projeteis.get(i).setAtivo(false);
+                            if (!personagens.get(y).getVivo()) {
+                                System.out.println("ID: "+personagens.get(y).getIdPerson()+" Dead");
+                            }
+                        }
+                    }
+                    y++;
+                }
+            }
+            i++;
         }
     }
     
-    public void colisaoProjeteisPersonagens(int i) {
-        for (int y = 0; y < personagens.size();) {
-            if (personagens.get(y).getVivo() && personagens.get(y).getIdPerson() != projeteis.get(i).getIdPersonagem()) {// VERIFICA SE DONO DO PROJETIL É DIFERENTE DO ALVO QUE ESTÁ COLIDINDO
-                catetoH = projeteis.get(i).getPosX() - personagens.get(y).getPosX();
-                catetoV = projeteis.get(i).getPosY() - personagens.get(y).getPosY();
-                hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
-                if (hipotenusa <= projeteis.get(i).getRaio() + personagens.get(y).getRaio()) { // verifica se houve colisão circula
-                    personagens.get(y).recebeDano(projeteis.get(i).getDano()); // RETIRA HP DO INIMIGO
-                    System.out.println("ID: "+personagens.get(y).getIdPerson()+" Hp: " + personagens.get(y).getHp());
-                    progresso.setValue(personagens.get(y).getHp());
-                    projeteis.get(i).setAtivo(false);
-                    if (!personagens.get(y).getVivo()) {
-                         System.out.println("ID: "+personagens.get(y).getIdPerson()+" Dead");
-                    }
-                }
+    @Override
+    protected void paintComponent(Graphics graphics) {
+        super.paintComponent(graphics);
+        Graphics2D g2D  = (Graphics2D)graphics;
+        
+        //g.setColor(Color.RED);
+        g2D.drawLine((int)ax, (int)ay, (int)bx, (int)by);
+       
+        //MOSTRA OS OUTROS PERSONAGENS
+        for (int i = 0; i < personagens.size();) {
+            if (personagens.get(i).getVivo()) {
+                g2D.drawImage(personagens.get(i).getImagem(), personagens.get(i).affinetransform(), null);
             }
-            y++;
+            i++;
+        }
+        //MOSTRA OS OBSTACULOS
+        for (int i = 0; i < obstaculos.size();) {
+            if (obstaculos.get(i).isAtivo()) {
+                graphics.drawOval(obstaculos.get(i).getPosX(), obstaculos.get(i).getPosY(), obstaculos.get(i).getRaio(), obstaculos.get(i).getRaio());
+            }
+            i++; 
+        }
+        //MOSTRA OS PROJETEIS
+        for (int i = 0; i < projeteis.size();) {
+            if (projeteis.get(i).isAtivo()) {
+                g2D.drawImage(projeteis.get(i).getImagem(), projeteis.get(i).affinetransform(graphics), null); 
+            }
+            i++;
         }
     }
 }

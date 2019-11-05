@@ -1,26 +1,22 @@
 package controle;
 
 
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.imageio.ImageIO;
 
 public class  Projetil  {
     
-    private BufferedImage direita_baixo;
-    private BufferedImage direita_cima;
-    private BufferedImage esquerda_baixo;
-    private BufferedImage esquerda_cima;
-    private BufferedImage direita;
-    private BufferedImage esquerda;
-    private BufferedImage cima;
-    private BufferedImage baixo;
     private double posX;
     private double posY;
     private double raio;
     private int velX;
     private int velY;
-    private BufferedImage imgAtual;
+    private BufferedImage imagem;
     private int velocidade;
     private boolean ativo = false;
     int i=0;
@@ -38,19 +34,14 @@ public class  Projetil  {
     private double angleRad;
     private double angleDeg;
     
+    // desenhar
+    private Graphics2D graphics2D;
+    private AffineTransform af;
     
     public Projetil() {
 
         try {
-            String url = "/imgs/projetil/projetil_left.gif";
-            this.direita_cima   =   ImageIO.read(getClass().getResource(url));
-            this.direita_baixo  =   ImageIO.read(getClass().getResource(url));
-            this.esquerda_cima  =   ImageIO.read(getClass().getResource(url));
-            this.esquerda_baixo =   ImageIO.read(getClass().getResource(url));
-            this.baixo      =   ImageIO.read(getClass().getResource(url));
-            this.cima       =   ImageIO.read(getClass().getResource(url));
-            this.direita    =   ImageIO.read(getClass().getResource(url));
-            this.esquerda   =   ImageIO.read(getClass().getResource(url));
+            this.imagem =   ImageIO.read(getClass().getResource("/imgs/projetil/projetil_left.gif"));
         } catch (IOException e) {
             System.out.println(e);
         }
@@ -60,6 +51,7 @@ public class  Projetil  {
         this.velX = 0;
         this.velY = 0;
         this.velocidade = 10;
+        af = new AffineTransform();
     }
 
     
@@ -71,26 +63,6 @@ public class  Projetil  {
             setPosX(getPosX()+ (propocaoX * getVelocidade()));
             setPosY(getPosY()+ (propocaoY * getVelocidade()));
             
-            if (propocaoY < 0) {
-                setImgAtual(getCima());
-                if (propocaoX < 0) {
-                    setImgAtual(getEsquerda_cima());
-                } else if (propocaoX > 0) {
-                    setImgAtual(getDireita_cima());
-                }
-            } else if (propocaoY>0) {
-                setImgAtual(getBaixo());
-                 if (propocaoX < 0) {
-                    setImgAtual(getEsquerda_baixo());
-                } else if (propocaoX > 0) {
-                    setImgAtual(getDireita_baixo());
-                }
-            } else if (propocaoX > 0) { 
-                setImgAtual(getDireita());
-
-            } else if (propocaoX < 0) { 
-                setImgAtual(getEsquerda());
-            }
             if(getPosX() >= Principal.LARGURA_TELA || getPosY() >= Principal.ALTURA_TELA || getPosX() <=0 || getPosY() <= 0 ){
                 this.ativo = false;
                 this.i = 0;
@@ -111,69 +83,6 @@ public class  Projetil  {
     //
     //GETTER & SETTERS
     //
-    public BufferedImage getDireita_baixo() {
-        return direita_baixo;
-    }
-
-    public void setDireita_baixo(BufferedImage direita_baixo) {
-        this.direita_baixo = direita_baixo;
-    }
-
-    public BufferedImage getDireita_cima() {
-        return direita_cima;
-    }
-
-    public void setDireita_cima(BufferedImage direita_cima) {
-        this.direita_cima = direita_cima;
-    }
-
-    public BufferedImage getEsquerda_baixo() {
-        return esquerda_baixo;
-    }
-
-    public void setEsquerda_baixo(BufferedImage esquerda_baixo) {
-        this.esquerda_baixo = esquerda_baixo;
-    }
-
-    public BufferedImage getEsquerda_cima() {
-        return esquerda_cima;
-    }
-
-    public void setEsquerda_cima(BufferedImage esquerda_cima) {
-        this.esquerda_cima = esquerda_cima;
-    }
-
-    public BufferedImage getDireita() {
-        return direita;
-    }
-
-    public void setDireita(BufferedImage direita) {
-        this.direita = direita;
-    }
-
-    public BufferedImage getEsquerda() {
-        return esquerda;
-    }
-
-    public void setEsquerda(BufferedImage esquerda) {
-        this.esquerda = esquerda;
-    }
-
-    public BufferedImage getCima() {
-        return cima;
-    }
-
-    public void setCima(BufferedImage cima) {
-        this.cima = cima;
-    }
-
-    public BufferedImage getBaixo() {
-        return baixo;
-    }
-
-    public void setBaixo(BufferedImage baixo) {
-        this.baixo = baixo;
-    }
 
     public double getPosX() {
         return posX;
@@ -215,13 +124,10 @@ public class  Projetil  {
         this.velY = velY;
     }
 
-    public BufferedImage getImgAtual() {
-        return imgAtual;
+    public BufferedImage getImagem() {
+        return imagem;
     }
-
-    public void setImgAtual(BufferedImage imgAtual) {
-        this.imgAtual = imgAtual;
-    }
+    
     public int getVelocidade() {
         return velocidade;
     }
@@ -278,5 +184,16 @@ public class  Projetil  {
     }
     public void setAngulo(double angulo){
         this.angulo = angulo;
+    }
+    
+    public AffineTransform affinetransform(Graphics g){
+        graphics2D = (Graphics2D)g;
+        af = new AffineTransform();
+        graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        graphics2D.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+        graphics2D.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_PURE);
+        af.translate(getPosX(), getPosY()); // PEGA A POSIÇÃO DA IMAGEM QUE VAI SER ROTACIONADA
+        af.rotate(Math.toRadians(getAngulo()), getRaio(), getRaio()); // GIRAR A IMAGEM
+        return af;
     }
 }
