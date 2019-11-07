@@ -2,17 +2,15 @@ package controle;
 
 import static controle.Principal.progresso;
 import java.awt.Graphics;
-import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.RenderingHints;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
-import java.awt.geom.AffineTransform;
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
@@ -43,6 +41,7 @@ public class Game extends JPanel {
     private ArrayList<Projetil> projeteis;
     private ArrayList<Personagem> personagens;
     private ArrayList<Barreira> obstaculos;
+    private Random numAleatorio = new Random();
 
     private final int NumProjeteis = 100;
 
@@ -198,15 +197,20 @@ public class Game extends JPanel {
         } else {
             personagens.get(0).habilidade_1(false);
         }
-        personagens.get(0).mover(person_k_cima, person_k_direita, person_k_baixo, person_k_esquerda);
+        
+        if(personagens.get(0).getVivo()){
+            personagens.get(0).mover(person_k_cima, person_k_direita, person_k_baixo, person_k_esquerda);
+        }
         comunicar.setMovimento(person_k_cima, person_k_baixo, person_k_esquerda, person_k_direita);
         // A CADA VEZ QUE PRESIONAR ESPAÇO, UM NOVO PROJETIL É CRIADO
         if (person_k_disparo) {
             while(i_disparo < projeteis.size()) {
-                if (!projeteis.get(i_disparo).isAtivo()) {
+                if (!projeteis.get(i_disparo).isAtivo() &&personagens.get(0).getVivo()) {
                     projeteis.get(i_disparo).setPersonagem(personagens.get(0));
                     projeteis.get(i_disparo).setDirecao(mousePosX,mousePosY);
                     projeteis.get(i_disparo).setAtivo(true);
+                    
+                    
                     i_disparo=0;
                     break;
                 }
@@ -215,15 +219,85 @@ public class Game extends JPanel {
             person_k_disparo = false;
         }
     }
-    
+    boolean a,b,c,d;
+    int contador=0;
     public void update() {
         //MOVIMENTA O PERSONAGEM
         for (int i = 0; i < personagens.size();) {
             personagens.get(i).setPosX(personagens.get(i).getPosX() + personagens.get(i).getVelX());
             personagens.get(i).setPosY(personagens.get(i).getPosY() + personagens.get(i).getVelY());
-            personagens.get(i).setDirecaoMouse(mousePosX, mousePosY);
+            personagens.get(0).setDirecaoMouse(mousePosX, mousePosY);
             i++;
         }
+        
+        // CODIGO DO BOT
+        
+        
+        //ATIRA NO MEU PERSONAGEM
+        
+        if (personagens.get(0).getVivo()) {
+            catetoH = personagens.get(0).getPosX() - personagens.get(1).getPosX();
+            catetoV = personagens.get(0).getPosY() - personagens.get(1).getPosY();
+            hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
+            if (hipotenusa <= (personagens.get(0).getRaio() + personagens.get(1).getRaio()) * 3) { // verifica se houve colisão circular
+               
+                //MIRA NO MEU PERSONAGEM
+                personagens.get(1).setDirecaoMouse(personagens.get(0).getPosX(), personagens.get(0).getPosY());
+                
+                if (97 < numAleatorio.nextInt(100)) {
+            
+                    while(i_disparo < projeteis.size()) {
+                        if (!projeteis.get(i_disparo).isAtivo()) {
+                            //System.out.println("BOT DISPAROU");
+                            projeteis.get(i_disparo).setPersonagem(personagens.get(1));
+                            projeteis.get(i_disparo).setDirecao((personagens.get(0).getPosX()+numAleatorio.nextInt(100)),(personagens.get(0).getPosY()+numAleatorio.nextInt(100)));
+                            projeteis.get(i_disparo).setAtivo(true);
+                            i_disparo=0;
+                            break;
+                        }
+                        i_disparo++;
+                    }
+                    person_k_disparo = false;
+                }
+                
+                
+            }
+        }
+        for(int i=0;i<projeteis.size();){
+            
+            if (projeteis.get(i).isAtivo()) {
+                if(personagens.get(1).getIdPerson() != projeteis.get(i).getIdPersonagem()){
+
+                    catetoH = personagens.get(1).getPosX() - projeteis.get(i).getPosX();
+                    catetoV = personagens.get(1).getPosY() - projeteis.get(i).getPosY();
+                    hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
+                    if (hipotenusa <= ((personagens.get(1).getRaio() + projeteis.get(i).getRaio()) * 2)) { // verifica se houve colisão circular
+
+                        System.out.println("projetil proximo: "+hipotenusa);
+                        if(numAleatorio.nextInt(100) >95){    
+                            a=(numAleatorio.nextInt(2)==1);
+                            b=(numAleatorio.nextInt(2)==1);
+                            c=(numAleatorio.nextInt(2)==1);
+                            d=(numAleatorio.nextInt(2)==1);
+                             contador=1;
+                        }
+                        personagens.get(1).mover(a,b,c,d);
+                        personagens.get(1).setPosX(personagens.get(1).getPosX() + personagens.get(1).getVelX());
+                        personagens.get(1).setPosY(personagens.get(1).getPosY() + personagens.get(1).getVelY());
+                        personagens.get(1).setDirecaoMouse(personagens.get(0).getPosX(), personagens.get(0).getPosY());
+
+                    }else{
+                        System.out.println("bot: "+((personagens.get(1).getRaio() + projeteis.get(i).getRaio())*2)+"  projetil longe: "+hipotenusa);
+                    }
+                }
+            }
+            i++;
+        }
+        
+        
+        //projeteis.get(i).isAtivo()
+        
+        
         //VERIFICA SE O PROJETIL ESTÁ NO ESTADO ATIVO, SE ESTIVER, ELE MOVIMENTA ESSE PROJETIL
         //O PROJETIL É ATIVO ENQUANTO A SUA POSIÇÃO FOR DIFERENTE DA POSIÇÃO DO SEU DESTINO
         for (int i = 0; i < projeteis.size();) {

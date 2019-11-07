@@ -10,17 +10,21 @@
             <file>file:/C:/Users/Leandro/Documents/NetBeansProjects/dimensionfire/DimensionFire/src/controle/Projetil.java</file>
             <file>file:/C:/Users/Leandro/Documents/NetBeansProjects/dimensionfire/DimensionFire/src/controle/Game.java</file>
         </group>
-        <group name="Livre">
-            <file>file:/C:/Users/Leandro/Documents/NetBeansProjects/dimensionfire/DimensionFire/src/controle/Game.java</file>
-            <file>file:/C:/Users/Leandro/Documents/NetBeansProjects/dimensionfire/DimensionFire/src/controle/Classe.java</file>
-            <file>file:/C:/Users/Leandro/Documents/NetBeansProjects/dimensionfire/DimensionFire/src/controle/Personagem.java</file>
-            <file>file:/C:/Users/Leandro/Documents/NetBeansProjects/dimensionfire/DimensionFire/src/controle/Projetil.java</file>
-        </group>
         <group name="CSODADOS">
             <file>file:/C:/Users/Leandro/Documents/NetBeansProjects/dimensionfire/DimensionFire/src/controle/Personagem.java</file>
             <file>file:/C:/Users/Leandro/Documents/NetBeansProjects/dimensionfire/DimensionFire/src/controle/Projetil.java</file>
             <file>file:/C:/Users/Leandro/Documents/NetBeansProjects/dimensionfire/DimensionFire/src/controle/Classe.java</file>
             <file>file:/C:/Users/Leandro/Documents/NetBeansProjects/dimensionfire/DimensionFire/src/controle/Game.java</file>
+        </group>
+        <group name="Livre">
+            <file>file:/C:/Users/Leandro/Documents/NetBeansProjects/dimensionfire/DimensionFire/src/controle/Game.java</file>
+            <file>file:/C:/Users/Leandro/Documents/NetBeansProjects/dimensionfire/DimensionFire/src/controle/Atributo.java</file>
+            <file>file:/C:/Users/Leandro/Documents/NetBeansProjects/dimensionfire/DimensionFire/src/controle/Classe.java</file>
+            <file>file:/C:/Users/Leandro/Documents/NetBeansProjects/dimensionfire/DimensionFire/src/controle/Personagem.java</file>
+            <file>file:/C:/Users/Leandro/Documents/NetBeansProjects/dimensionfire/DimensionFire/src/controle/Habilidade.java</file>
+            <file>file:/C:/Users/Leandro/Documents/NetBeansProjects/dimensionfire/DimensionFire/src/controle/Projetil.java</file>
+            <file>file:/C:/Users/Leandro/Documents/NetBeansProjects/dimensionfire/DimensionFire/src/controle/Barreira.java</file>
+            <file>file:/C:/Users/Leandro/Documents/NetBeansProjects/dimensionfire/DimensionFire/src/controle/Mapa.java</file>
         </group>
     </open-files>
 </project-private>

@@ -130,6 +130,7 @@ public class Personagem extends Classe{
     }
     
     public void mover(boolean kup,  boolean kright, boolean kdown, boolean kleft) {
+        //System.out.println(kup+""+kright+""+kdown+""+kleft);
         this.movimento = false;
         if (kup == true) {
             this.movimento = true;
