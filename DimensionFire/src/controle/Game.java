@@ -24,6 +24,7 @@ public class Game extends JPanel {
     public Som som;
     public Classe classe;
     private Comunicar comunicar;
+    private Zumbi zumbi;
     double ax,ay,bx,by,cx,cy;
 
     private boolean person_k_cima = false;
@@ -41,6 +42,7 @@ public class Game extends JPanel {
     private ArrayList<Projetil> projeteis;
     private ArrayList<Personagem> personagens;
     private ArrayList<Barreira> obstaculos;
+    //private ArrayList<Zumbi> zumbis;
     private Random numAleatorio = new Random();
 
     private final int NumProjeteis = 100;
@@ -52,9 +54,15 @@ public class Game extends JPanel {
         projeteis = new ArrayList<>();
         personagens = new ArrayList<>();
         som = new Som();
+        //zumbi = new Zumbi();
+        
+        //zumbis.add(zumbi);
         
         obstaculos = mapa.mapa_1(); // POPULA OBSTACULOS
         personagens.add(classe.Matias()); //POPULA PERSONAGENS
+        personagens.add(classe.Julios()); //POPULA PERSONAGENS
+        personagens.add(classe.Julios()); //POPULA PERSONAGENS
+        personagens.add(classe.Julios()); //POPULA PERSONAGENS
         personagens.add(classe.Julios()); //POPULA PERSONAGENS
         //personagem = personagens.get(0);
         
@@ -193,16 +201,16 @@ public class Game extends JPanel {
             i++;
         }
         if (habilidade_1) {
-            personagens.get(0).habilidade_1(true);
+            //personagens.get(0).habilidade_1(true);
         } else {
-            personagens.get(0).habilidade_1(false);
+            //personagens.get(0).habilidade_1(false);
         }
         
         if(personagens.get(0).getVivo()){
             personagens.get(0).mover(person_k_cima, person_k_direita, person_k_baixo, person_k_esquerda);
         }
         comunicar.setMovimento(person_k_cima, person_k_baixo, person_k_esquerda, person_k_direita);
-        // A CADA VEZ QUE PRESIONAR ESPAÇO, UM NOVO PROJETIL É CRIADO
+        // A CADA VEZ QUE PRESIONAR O MOUSE, UM NOVO PROJETIL É CRIADO
         if (person_k_disparo) {
             while(i_disparo < projeteis.size()) {
                 if (!projeteis.get(i_disparo).isAtivo() &&personagens.get(0).getVivo()) {
@@ -221,6 +229,11 @@ public class Game extends JPanel {
     }
     boolean a,b,c,d;
     int contador=0;
+    double catetoX;
+    double catetoY;
+    double propocaoX;
+    double propocaoY;
+    private double hipotenusa2;
     public void update() {
         //MOVIMENTA O PERSONAGEM
         for (int i = 0; i < personagens.size();) {
@@ -231,39 +244,30 @@ public class Game extends JPanel {
         }
         
         // CODIGO DO BOT
-        
-        
-        //ATIRA NO MEU PERSONAGEM
-        
+        //SEGUE MEU PERSONAGEM
         if (personagens.get(0).getVivo()) {
-            catetoH = personagens.get(0).getPosX() - personagens.get(1).getPosX();
-            catetoV = personagens.get(0).getPosY() - personagens.get(1).getPosY();
-            hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
-            if (hipotenusa <= (personagens.get(0).getRaio() + personagens.get(1).getRaio()) * 3) { // verifica se houve colisão circular
-               
-                //MIRA NO MEU PERSONAGEM
-                personagens.get(1).setDirecaoMouse(personagens.get(0).getPosX(), personagens.get(0).getPosY());
-                
-                if (97 < numAleatorio.nextInt(100)) {
-            
-                    while(i_disparo < projeteis.size()) {
-                        if (!projeteis.get(i_disparo).isAtivo()) {
-                            //System.out.println("BOT DISPAROU");
-                            projeteis.get(i_disparo).setPersonagem(personagens.get(1));
-                            projeteis.get(i_disparo).setDirecao((personagens.get(0).getPosX()+numAleatorio.nextInt(100)),(personagens.get(0).getPosY()+numAleatorio.nextInt(100)));
-                            projeteis.get(i_disparo).setAtivo(true);
-                            i_disparo=0;
-                            break;
-                        }
-                        i_disparo++;
+            for(int i = 1;i<personagens.size();){
+                catetoH = personagens.get(0).getPosX() - personagens.get(1).getPosX();
+                catetoV = personagens.get(0).getPosY() - personagens.get(1).getPosY();
+                hipotenusa = Math.sqrt(Math.pow(catetoH, 2) + Math.pow(catetoV, 2));
+                if (hipotenusa <= (personagens.get(0).getRaio() + personagens.get(1).getRaio()) * 5) { // verifica se houve colisão circular
+                    //MIRA NO MEU PERSONAGEM
+                    personagens.get(i).setDirecaoMouse(personagens.get(0).getPosX(), personagens.get(0).getPosY());
+                    catetoX = (personagens.get(0).getPosX()-personagens.get(0).getRaio()) - personagens.get(i).getPosX()+personagens.get(i).getRaio() ;
+                    catetoY = (personagens.get(0).getPosY()-personagens.get(0).getRaio()) - personagens.get(i).getPosY()+personagens.get(i).getRaio();
+                    hipotenusa2 = Math.sqrt((catetoX*catetoX)+(catetoY*catetoY));
+                    if(hipotenusa2>2){
+                    propocaoX = catetoX  / hipotenusa2 ; 
+                    propocaoY = catetoY  / hipotenusa2 ; 
+
+                    personagens.get(i).setPosY(personagens.get(i).getPosY()+ (propocaoY * 1));
+                    personagens.get(i).setPosX(personagens.get(i).getPosX()+ (propocaoX * 1));
                     }
-                    person_k_disparo = false;
                 }
-                
-                
+                i++;
             }
         }
-        for(int i=0;i<projeteis.size();){
+        /*for(int i=0;i<projeteis.size();){
             
             if (projeteis.get(i).isAtivo()) {
                 if(personagens.get(1).getIdPerson() != projeteis.get(i).getIdPersonagem()){
@@ -292,7 +296,7 @@ public class Game extends JPanel {
                 }
             }
             i++;
-        }
+        }*/
         
         
         //projeteis.get(i).isAtivo()
@@ -328,6 +332,9 @@ public class Game extends JPanel {
         repaint();
     }
     
+    public void seguirPersonagem(){
+        
+    }
     
     
     
@@ -446,7 +453,7 @@ public class Game extends JPanel {
         Graphics2D g2D  = (Graphics2D)graphics;
         
         //g.setColor(Color.RED);
-        g2D.drawLine((int)ax, (int)ay, (int)bx, (int)by);
+        //g2D.drawLine((int)ax, (int)ay, (int)bx, (int)by);
        
         //MOSTRA OS OUTROS PERSONAGENS
         for (int i = 0; i < personagens.size();) {

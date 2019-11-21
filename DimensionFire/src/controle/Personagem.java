@@ -14,10 +14,10 @@ public class Personagem extends Classe{
     private boolean movimento;
     
     
-    private int posX;
-    private int posY;
-    private int ultPosX;
-    private int ultPosY;
+    private double posX;
+    private double posY;
+    private double ultPosX;
+    private double ultPosY;
     private int raio;
     private int velX;
     private int velY;
@@ -57,7 +57,7 @@ public class Personagem extends Classe{
     
     
     StringTokenizer pegarXY;
-    public void habilidade_1(boolean ativo){
+    /*public void habilidade_1(boolean ativo){
         if(atributo.getHabilidade().isCorrer()){ 
             if(ativo){
                 atributo.setVelocidade(atributo.getHabilidade().getCorrer().correr(atributo.getVelocidade_padrao()));
@@ -69,28 +69,30 @@ public class Personagem extends Classe{
         }
         if(atributo.getHabilidade().isTeleporte()){
              if(ativo){
-                pegarXY = new StringTokenizer(atributo.getHabilidade().getTeleporte().Teleportar(getDirecao(), getPosX(), getPosY()));
+                 double z = 3.9;
+                 int x = (int) atributo.getHabilidade().getTeleporte().Teleportar(getDirecao(), getPosX(), getPosY());
+                pegarXY = new StringTokenizer(x);
                 // Verifica o próximo token
                 setPosX(Integer.parseInt(pegarXY.nextToken(":")));
                 setPosY(Integer.parseInt(pegarXY.nextToken(":"))); 
                 
             }
         }
-    }
+    }*/
 
-    public int getPosX() {
+    public double getPosX() {
         return posX;
     }
 
-    public void setPosX(int posX) {
+    public void setPosX(double posX) {
         this.posX = posX;
     }
 
-    public int getPosY() {
+    public double getPosY() {
         return posY;
     }
 
-    public void setPosY(int posY) {
+    public void setPosY(double posY) {
         this.posY = posY;
     }
 
@@ -228,11 +230,11 @@ public class Personagem extends Classe{
     }
     
     
-    public void setDirecaoMouse( int destinoX, int destinoY) {
+    public void setDirecaoMouse( double destinoX, double destinoY) {
         catetoX = (destinoX-getRaio()) - getPosX() ;
         catetoY = (destinoY-getRaio()) - getPosY();
-        angleRad = Math.atan2(catetoX,catetoY);
-        angleDeg = Math.toDegrees(angleRad) -90; 
+        angleRad = Math.atan2(catetoX,catetoY); // RETORNAR A COORDENADA POLAR
+        angleDeg = Math.toDegrees(angleRad) -90; // CONVERTE ANGULO EM RADIANO PARA GRAUS
         if (angleDeg < 0) 
             angleDeg += 360; 
         else if (angleDeg > 360) 
